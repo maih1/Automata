@@ -1,0 +1,2 @@
+# Automata
+DFA minimization, CKY
