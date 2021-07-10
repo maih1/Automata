@@ -1,3 +1,6 @@
+import math
+import Input as ip
+
 class nfa:
     def __init__(self, startState, finalStates, states, alphabet, transitions) -> None:
         """
@@ -14,40 +17,7 @@ class nfa:
         self.alphabet = alphabet
         self.transitions = transitions
 
-def opendFileInput(filename):
-    file = open(filename)
-    rd = file.readline()
-    print(rd,'3')
-    startState = ''
-    finalStartes = []
-    states = []
-    alphabet = []
-    transitions = dict()
-
-    count = 0
-
-    for i in file:
-        data = i.rstrip().split()
-        
-        if i == 0:
-            startState = str(i)
-        elif i == 1:
-            finalStartes = data
-        else:
-            states.append(data[0])
-            # alphabet.append(data[1])
-            transitions.update({'detal ' + str(count): data})
-            count += 1
-    
-    dictData = {
-        'startState': startState,
-        'finalStartes': finalStartes,
-        'states': set(states),
-        'alphabet': set(alphabet),
-        'transition': transitions
-    }
-
-    file.close()
-    
-    return dictData
-print(opendFileInput('t1.txt')) 
+# a = ip.opendFileInput('t1.txt')
+# c = ip.ndfInput(a)
+# for x in c:
+#     print(x, c[x])
