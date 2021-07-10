@@ -17,20 +17,23 @@ def ndfInput(filedata):
     finalStartes = []
     states = []
     alphabet = []
-    transitions = dict()
+    transitions = []
 
     count = 0
 
     for i in range(len(filedata)):
         if i == 0:
             startState = filedata[i][0]
+            states.append(filedata[i][0])
         elif i == 1:
             finalStartes = filedata[i]
+            for j in filedata[i]:
+                states.append(j)
         else:
             
             states.append(filedata[i][0])
             alphabet.append(filedata[i][1])
-            transitions.update({'F'+str(count): filedata[i]})
+            transitions.append(filedata[i])
 
             count += 1
         
@@ -39,12 +42,7 @@ def ndfInput(filedata):
         'finalStartes': finalStartes,
         'states': sorted(set(states)),
         'alphabet': sorted(set(alphabet)),
-        'transition': transitions
+        'transitions': transitions
     }
 
     return ndftData
-
-# a = opendFileInput('t1.txt')
-# c = ndfInput(a)
-# for x in c:
-#   print(x, c[x])

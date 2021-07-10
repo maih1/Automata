@@ -1,4 +1,5 @@
 /test
+/__pycache__
 t.py
 t1.py
 t2.py
