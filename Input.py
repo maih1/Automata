@@ -39,7 +39,7 @@ def ndfInput(filedata):
         
     ndftData = {
         'startState': startState,
-        'finalStartes': finalStartes,
+        'finalStates': finalStartes,
         'states': sorted(set(states)),
         'alphabet': sorted(set(alphabet)),
         'transitions': transitions
