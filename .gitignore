@@ -1,4 +1,5 @@
 /test
+/finite-automata
 /__pycache__
 t.py
 t1.py
@@ -6,3 +7,4 @@ t2.py
 t3.py
 t4.py
 t1.txt
+t2.txt

@@ -19,8 +19,8 @@ class Automaton:
         self.transitions = transitions
 
 
+# Input data in otomat
 def automatonData(filename):
-    # Input data in otomat
     fileData = ip.opendFileInput(filename)
     ndftData = ip.ndfInput(fileData)
 
@@ -41,8 +41,8 @@ def automatonData(filename):
     return automaton
 
 
+# find Unreachable State
 def findUnreachableState(states, startState, transitions):
-    # find Unreachable State
     state_unreachable = []
 
     states = [i for i in states if i != startState]
@@ -59,13 +59,13 @@ def findUnreachableState(states, startState, transitions):
     return state_unreachable
 
 
+# find non-loop transition of state x
 def findTransitions(x, transitions):
-    # find non-loop transition of state x
     listFind = []
 
     for i in transitions:
         dataFind = []
-        if x == i[0] and x != i[2]:
+        if x == i[0]:
             dataFind.append(i[1])
             dataFind.append(i[2])
             listFind.append(tuple(dataFind))
@@ -73,8 +73,91 @@ def findTransitions(x, transitions):
     return listFind
 
 
+# Get the next state over a number of transition
+def getNextstate(state, transitions, alphabet):
+    listNextState = []
+    listNextTran = []
+
+    # generate 2 transition with alphabet
+    for i in range(len(alphabet)):
+        nextTran = [alphabet[i], alphabet[i]]
+        listNextTran.append(nextTran)
+
+    # get next state
+    for i in listNextTran:
+        nextState = state
+        while len(i) > 0:
+            check = True
+            for j in transitions:
+                if check == True and nextState == j[0] and i[0] == j[1]:
+                    nextState = j[2]
+                    i.pop()
+                    check = False
+
+        listNextState.append(nextState)
+
+    return listNextState
+
+
+# Get equivalence states
+def getEquivalenceStates(states, startState, finalStates, transitions, alphabet):
+    # unreachable state
+    state_unreachable = findUnreachableState(states, startState, transitions)
+    count = 1
+
+    # list equivalence states
+    listEquivalenceStates = []
+
+    # remove unreachable state in states
+    for i in state_unreachable:
+        states.remove(i)
+
+    # find equivalence states
+    for i in states:
+        # get transition of i
+        tran_i = findTransitions(i, transitions)
+
+        for j in range(count, len(states)):
+            # get transition of j
+            tran_j = findTransitions(states[j], transitions)
+            check = True
+
+            # state i is final state and state j is not final state, contra
+            if (i in finalStates and states[j] not in finalStates) or (i not in finalStates and states[j] in finalStates):
+                pass
+
+            # state i, j is final state
+            # elif (i in finalStates and states[j] in finalStates):
+            #     equivalenceStates = []
+            #     equi_state = []
+            #     equi_state.append(i)
+            #     equi_state.append(states[j])
+            #     equivalenceStates.append(equi_state)
+            #     equivalenceStates.append(k)
+            #     listEquivalenceStates.append(equivalenceStates)
+
+            # state i, j is not final state
+            else:
+                nextTran_p = getNextstate(i, transitions, alphabet)
+                nextTran_q = getNextstate(states[j], transitions, alphabet)
+                for k in tran_i:
+                    # next state of state i equal next state of state j
+                    if k in tran_j and check == True and nextTran_p == nextTran_q:
+                        equivalenceStates = []
+                        equi_state = []
+                        equi_state.append(i)
+                        equi_state.append(states[j])
+                        equivalenceStates.append(equi_state)
+                        equivalenceStates.append(k)
+                        listEquivalenceStates.append(equivalenceStates)
+                        check = False
+        count += 1
+
+    return listEquivalenceStates
+
+
+# merge states together to a destination
 def mergeState(listStateEqui):
-    # merge states together to a destination
     newListStateEqui = []
     j = 0
 
@@ -105,99 +188,52 @@ def mergeState(listStateEqui):
 
         j += 1
 
-        # else:
-        #     j += 1
-        #     # newListStateEqui[j] = listState[i]
-        #     newListStateEqui.append(listState[i])
-        #     start = newListStateEqui[j]
-        #     listState.pop(i)
-
     return newListStateEqui
 
 
-def getEquivalenceStates(states, startState, finalStates, transitions):
-    # unreachable state
-    state_unreachable = findUnreachableState(states, startState, transitions)
-    count = 1
+# list equivalence states
+def dfaMinimization(states, startState, finalStates, transitions, alphabet):
+    getListEquivalenceStates = getEquivalenceStates(
+        states, startState, finalStates, transitions, alphabet)
+    print(getListEquivalenceStates)
+    list_equi = mergeState(getListEquivalenceStates)
+    print(list_equi)
+    dfa = Automaton()
 
-    # list equivalence states
-    listEquivalenceStates = []
+    # new start state
+    check = True
+    start_index = 0
+    while check == True and start_index < len(list_equi):
+        if startState in list_equi[start_index][0] and check == True:
+            dfa.startState = list_equi[start_index][0]
+            check = False
+        elif start_index == len(list_equi) - 1:
+            dfa.startState = startState
+            check = False
+        else:
+            start_index += 1
 
-    # remove unreachable state in states
-    for i in state_unreachable:
-        states.remove(i)
+    # new final states
+    # for i in finalStates:
+    #     if i in list_equi[]
 
-    # find equivalence states
-    for i in states:
-        # get transition of i
-        tran_i = findTransitions(i, transitions)
-
-        for j in range(count, len(states)):
-            # get transition of j
-            tran_j = findTransitions(states[j], transitions)
-            check = True
-
-            # state i is final state and state j is not final state, contra
-            if (i in finalStates and states[j] not in finalStates) or (i not in finalStates and states[j] in finalStates):
-                pass
-
-            # state i, j is final state
-            elif (i in finalStates and states[j] in finalStates):
-                equivalenceStates = []
-                equi_state = []
-                equi_state.append(i)
-                equi_state.append(states[j])
-                equivalenceStates.append(equi_state)
-                equivalenceStates.append(k)
-                listEquivalenceStates.append(equivalenceStates)
-
-            # state i, j is not final state
-            else:
-                for k in tran_i:
-                    # next state of state i equal next state of state j
-                    if k in tran_j and check == True:
-                        equivalenceStates = []
-                        equi_state = []
-                        equi_state.append(i)
-                        equi_state.append(states[j])
-                        equivalenceStates.append(equi_state)
-                        equivalenceStates.append(k)
-                        listEquivalenceStates.append(equivalenceStates)
-                        check = False
-        count += 1
-
-    return listEquivalenceStates
-
-
-# def dfaMinimization(states, startState, finalStates, transitions):
-#     # list equivalence states
-#     listEquivalenceStates = getEquivalenceStates(
-#         states, startState, finalStates, transitions)
-#     dfa = Automaton()
-
-#     # new start state
-#     check = True
-#     for i in listEquivalenceStates:
-#         print(i)
-#         if startState in i and check == True:
-#             dfa.startState = i
-#             check = False
-#         else:
-#             dfa.startState = startState
-
-#     return dfa
+    return dfa
 
 
 a = automatonData('t1.txt')
-# print(a.finalStates)
+# print(a.alphabet)
 f = findTransitions('a', a.transitions)
 # print(f)
 
-m = getEquivalenceStates(a.states, a.startState, a.finalStates, a.transitions)
+m = getEquivalenceStates(a.states, a.startState,
+                         a.finalStates, a.transitions, a.alphabet)
 # print(m)
 
 u = mergeState(m)
-print(u)
+# print(u)
 
-# m = dfaMinimization(a.states, a.startState, a.finalStates, a.transitions)
-# print(m.startState)
+# getNextstate('b', a.states, a.transitions, a.alphabet)
+
+m = dfaMinimization(a.states, a.startState, a.finalStates,
+                    a.transitions, a.alphabet)
+print(m.startState)
