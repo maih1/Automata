@@ -1,6 +1,4 @@
 import math
-from os import truncate
-from typing import Counter
 import Input as ip
 
 
@@ -62,7 +60,7 @@ def findUnreachableState(states, startState, transitions):
 
 
 def findTransitions(x, transitions):
-    # find non-loop transition of state x 
+    # find non-loop transition of state x
     listFind = []
 
     for i in transitions:
@@ -73,6 +71,49 @@ def findTransitions(x, transitions):
             listFind.append(tuple(dataFind))
 
     return listFind
+
+
+def mergeState(listStateEqui):
+    # merge states together to a destination
+    newListStateEqui = []
+    j = 0
+
+    # browse in this list equivalence states
+    while len(listStateEqui) != 0:
+        i = 0
+        check = True
+        start = listStateEqui[0]
+        # create new list equivalence states
+        newListStateEqui.append(listStateEqui[i])
+
+        while check == True:
+            equivalenceStates = []
+
+            # check next status is same
+            if i <= len(listStateEqui)-1 and start[1] == listStateEqui[i][1]:
+                # union of two states
+                union_state = list(set(start[0]) | set(listStateEqui[i][0]))
+                equivalenceStates.append(sorted(union_state))
+                equivalenceStates.append(start[1])
+                newListStateEqui[j] = equivalenceStates
+                start = newListStateEqui[j]
+                listStateEqui.pop(i)
+            elif i < len(listStateEqui)-1:
+                i += 1
+            else:
+                check = False
+
+        j += 1
+
+        # else:
+        #     j += 1
+        #     # newListStateEqui[j] = listState[i]
+        #     newListStateEqui.append(listState[i])
+        #     start = newListStateEqui[j]
+        #     listState.pop(i)
+
+    return newListStateEqui
+
 
 def getEquivalenceStates(states, startState, finalStates, transitions):
     # unreachable state
@@ -103,9 +144,12 @@ def getEquivalenceStates(states, startState, finalStates, transitions):
             # state i, j is final state
             elif (i in finalStates and states[j] in finalStates):
                 equivalenceStates = []
-                equivalenceStates.append(i)
-                equivalenceStates.append(states[j])
-                listEquivalenceStates.append(tuple(equivalenceStates))
+                equi_state = []
+                equi_state.append(i)
+                equi_state.append(states[j])
+                equivalenceStates.append(equi_state)
+                equivalenceStates.append(k)
+                listEquivalenceStates.append(equivalenceStates)
 
             # state i, j is not final state
             else:
@@ -113,19 +157,35 @@ def getEquivalenceStates(states, startState, finalStates, transitions):
                     # next state of state i equal next state of state j
                     if k in tran_j and check == True:
                         equivalenceStates = []
-                        equivalenceStates.append(i)
-                        equivalenceStates.append(states[j])
-                        # equivalenceStates.append(k)
-                        listEquivalenceStates.append(tuple(equivalenceStates))
+                        equi_state = []
+                        equi_state.append(i)
+                        equi_state.append(states[j])
+                        equivalenceStates.append(equi_state)
+                        equivalenceStates.append(k)
+                        listEquivalenceStates.append(equivalenceStates)
                         check = False
         count += 1
 
     return listEquivalenceStates
 
+
 # def dfaMinimization(states, startState, finalStates, transitions):
 #     # list equivalence states
-#     listEquivalenceStates = getEquivalenceStates(states, startState, finalStates, transitions)
+#     listEquivalenceStates = getEquivalenceStates(
+#         states, startState, finalStates, transitions)
+#     dfa = Automaton()
 
+#     # new start state
+#     check = True
+#     for i in listEquivalenceStates:
+#         print(i)
+#         if startState in i and check == True:
+#             dfa.startState = i
+#             check = False
+#         else:
+#             dfa.startState = startState
+
+#     return dfa
 
 
 a = automatonData('t1.txt')
@@ -134,4 +194,10 @@ f = findTransitions('a', a.transitions)
 # print(f)
 
 m = getEquivalenceStates(a.states, a.startState, a.finalStates, a.transitions)
-print(m)
+# print(m)
+
+u = mergeState(m)
+print(u)
+
+# m = dfaMinimization(a.states, a.startState, a.finalStates, a.transitions)
+# print(m.startState)
