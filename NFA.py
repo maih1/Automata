@@ -203,19 +203,34 @@ def dfaMinimization(states, startState, finalStates, transitions, alphabet):
     # new start state
     check = True
     start_index = 0
-    while check == True and start_index < len(list_equi):
-        if startState in list_equi[start_index][0] and check == True:
+    while check == True and start_index <= len(list_equi):
+        if start_index < len(list_equi) and startState in list_equi[start_index][0] and check == True:
             dfa.startState = list_equi[start_index][0]
             check = False
-        elif start_index == len(list_equi) - 1:
+        elif start_index == len(list_equi) - 1 or len(list_equi) == 0:
             dfa.startState = startState
             check = False
         else:
             start_index += 1
 
     # new final states
-    # for i in finalStates:
-    #     if i in list_equi[]
+    dfa.finalStates = []
+
+    for i in finalStates:
+        check_final = True
+        final_index = 0
+
+        while check_final == True and final_index <= len(list_equi):
+            if final_index < len(list_equi) and i in list_equi[final_index][0]:
+                dfa.finalStates.append(list_equi[final_index][0])
+                check_final = False
+            elif final_index == len(list_equi) - 1 or len(list_equi) == 0:
+                dfa.finalStates.append(i)
+                check_final = False
+            else:
+                final_index += 1
+
+    
 
     return dfa
 
@@ -237,3 +252,4 @@ u = mergeState(m)
 m = dfaMinimization(a.states, a.startState, a.finalStates,
                     a.transitions, a.alphabet)
 print(m.startState)
+print(m.finalStates)
