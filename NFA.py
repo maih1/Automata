@@ -1,5 +1,5 @@
 import math
-import Input as ip
+import Data as dt
 
 
 class Automaton:
@@ -10,7 +10,7 @@ class Automaton:
         -finalStartes: a list final state (F) []
         -states: a lists containing the states (S) []
         -alphabet: a lists alphabet (sigma) []
-        -transitions: state transition function (detal) {}
+        -transitions: state transition function (delta) {}
         """
         self.startState = startState
         self.finalStates = finalStates
@@ -18,11 +18,36 @@ class Automaton:
         self.alphabet = alphabet
         self.transitions = transitions
 
+    # automation data frame
+    def automatonForm(self):
+        automaton = {
+            'startState': self.startState,
+            'finalStates': self.finalStates,
+            'states': self.states,
+            'alphabet': self.alphabet,
+            'transitions': self.transitions
+        }
+
+        return automaton
+
+    # print data automation
+    def printAutomation(self):
+        automaton = self.automatonForm()
+
+        # print
+        for i in automaton:
+            if i == 'transitions':
+                print('+ transitions (delta):')
+                for j in range(len(automaton[i])):
+                    print('\tdelta {}: {}'.format(j, automaton[i][j]))
+            else:
+                print('+ {}: {}'.format(i, automaton[i]))
+
 
 # Input data in otomat
 def automatonData(filename):
-    fileData = ip.opendFileInput(filename)
-    ndftData = ip.ndfInput(fileData)
+    fileData = dt.opendFileInput(filename)
+    ndftData = dt.ndfInput(fileData)
 
     automaton = Automaton()
 
@@ -300,25 +325,13 @@ def dfaMinimization( startState, finalStates, states, alphabet, transitions):
 
     return dfa
 
+if __name__ == '__main__':
+    print( "Automation input: " )
+    automaton = automatonData('t1.txt')
+    automaton.printAutomation()
 
-a = automatonData('t1.txt')
-print(a.states)
-f = findTransitions('g', a.transitions)
-# print(f)
+    print('----------------------------------------------')
 
-# fu = findUnreachableState(a.states, a.startState, a.transitions)
-# print(fu)
-
-# m = getEquivalenceStates(a.states, a.startState,a.finalStates, a.transitions, a.alphabet)
-# print(m)
-
-# u = mergeState(m)
-# print(u)
-
-# getNextstate('b', a.states, a.transitions, a.alphabet)
-
-m = dfaMinimization(a.startState, a.finalStates, a.states, a.alphabet, a.transitions)
-print(m.startState)
-print(m.finalStates)
-print(m.states)
-print(m.transitions)
+    print( "Deterministic Finite Automaton Minimization" )
+    dfa = dfaMinimization(automaton.startState, automaton.finalStates, automaton.states, automaton.alphabet, automaton.transitions)
+    dfa.printAutomation()
