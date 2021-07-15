@@ -99,13 +99,16 @@ def findTransitions(x, transitions):
 
 
 # Get the next state over a number of transition
-def getNextstate(state, transitions, alphabet):
+# bug to to tototototo
+def getNextstate(trans, state, transitions, alphabet):
     listNextState = []
     listNextTran = []
 
     # generate 2 transition with alphabet
     for i in range(len(alphabet)):
-        nextTran = [alphabet[i], alphabet[i]]
+        nextTran = [trans, alphabet[i], alphabet[i]]
+        # nextTran = [alphabet[i], alphabet[i]]
+
         listNextTran.append(nextTran)
 
     # get next state
@@ -165,19 +168,25 @@ def getEquivalenceStates(states, startState, finalStates, transitions, alphabet)
 
             # state i, j is not final state
             else:
-                nextTran_p = getNextstate(i, transitions, alphabet)
-                nextTran_q = getNextstate(temp_states[j], transitions, alphabet)
                 for k in tran_i:
                     # next state of state i equal next state of state j
-                    if k in tran_j and check == True and nextTran_p == nextTran_q:
-                        equivalenceStates = []
-                        equi_state = []
-                        equi_state.append(i)
-                        equi_state.append(temp_states[j])
-                        equivalenceStates.append(equi_state)
-                        equivalenceStates.append(k)
-                        listEquivalenceStates.append(equivalenceStates)
-                        check = False
+                    if k in tran_j and check == True:
+                        trans = [k]
+                        intersection_trans = list(set(trans) & set(tran_j))
+                        
+                        # check the next state over a number of transition
+                        nextTran_p = getNextstate(intersection_trans[0][0], i, transitions, alphabet)
+                        nextTran_q = getNextstate(intersection_trans[0][0], temp_states[j], transitions, alphabet)
+
+                        if nextTran_p == nextTran_q:
+                            equivalenceStates = []
+                            equi_state = []
+                            equi_state.append(i)
+                            equi_state.append(temp_states[j])
+                            equivalenceStates.append(equi_state)
+                            equivalenceStates.append(k)
+                            listEquivalenceStates.append(equivalenceStates)
+                            check = False
         count += 1
 
     return listEquivalenceStates
@@ -234,34 +243,42 @@ def dfaMinimization( startState, finalStates, states, alphabet, transitions):
     dfa = Automaton()
 
     # new start state
-    check = True
-    start_index = 0
-    while check == True and start_index <= len(list_equi):
-        if start_index < len(list_equi) and startState in list_equi[start_index][0] and check == True:
-            dfa.startState = list_equi[start_index][0]
-            check = False
-        elif start_index == len(list_equi) - 1 or len(list_equi) == 0:
-            dfa.startState = startState
-            check = False
-        else:
-            start_index += 1
+    if len(list_equi) == 0:
+        dfa.startState = startState
+    else:
+        check_start = True
+        start_index = 0
+        while check_start == True and start_index <= len(list_equi):
+            if start_index < len(list_equi) and startState in list_equi[start_index][0] and check_start == True:
+                dfa.startState = tuple(list_equi[start_index][0])
+                check_start = False
+            elif start_index < len(list_equi) - 1:
+                start_index += 1
+            else:
+                check_start = False
 
     # new final states
-    dfa.finalStates = []
+    if len(list_equi) == 0:
+        dfa.finalStates = finalStates
+    else:
+        dfa_final = []
 
-    for i in finalStates:
-        check_final = True
-        final_index = 0
+        for i in finalStates:
+            check_final = True
+            final_index = 0
 
-        while check_final == True and final_index <= len(list_equi):
-            if final_index < len(list_equi) and i in list_equi[final_index][0]:
-                dfa.finalStates.append(list_equi[final_index][0])
-                check_final = False
-            elif final_index == len(list_equi) - 1 or len(list_equi) == 0:
-                dfa.finalStates.append(i)
-                check_final = False
-            else:
-                final_index += 1
+            while check_final == True and final_index <= len(list_equi):
+                if final_index < len(list_equi) and i in list_equi[final_index][0]:
+                    dfa_final.append(tuple(list_equi[final_index][0]))
+                    check_final = False
+                else:
+                    if final_index == len(list_equi) - 1 or len(list_equi) == 0:
+                        dfa_final.append(i)
+                        check_final = False
+                    else:
+                        final_index += 1
+            
+        dfa.finalStates = list(set(dfa_final))
     
     # new dfa states
     temp_states = states.copy()
@@ -278,14 +295,15 @@ def dfaMinimization( startState, finalStates, states, alphabet, transitions):
 
     # if the list is empty dfa transition equals input automat transition
     if len(list_equi) == 0:
-        dfa.transitions = transitions
+        dfa.transitions = transitions.copy()
     else:
         # add to transition equivalence states dfa transition 
+        temp_trandfa = []
         for i in list_equi:
-            new_tran = [i[0], i[1][0], i[1][1]]
-            dfa.transitions.append(new_tran)
+            new_tran = [tuple(i[0]), i[1][0], i[1][1]]
+            temp_trandfa.append(new_tran)
 
-        temp_dfa_tran = dfa.transitions.copy()
+        temp_dfa_tran = temp_trandfa.copy()
         temp_tran = transitions.copy()
         check_tran = True
 
@@ -293,7 +311,7 @@ def dfaMinimization( startState, finalStates, states, alphabet, transitions):
         for i in state_unreachable:
             k = 0
             while check_tran == True:
-                if i == temp_tran[k][0]:
+                if k < len(temp_tran) and i == temp_tran[k][0]:
                     temp_tran.pop(k)
                 else:
                     if k < len(temp_tran) - 1:
@@ -302,22 +320,43 @@ def dfaMinimization( startState, finalStates, states, alphabet, transitions):
                         check_tran = False
 
         # convert final state and delete transition in states together to a destination
-        for i in temp_dfa_tran:
+        for i in range(len(temp_dfa_tran)):
+            # if dfa.transitions[i][2] in temp_dfa_tran[i][0]:
+            #     dfa.transitions[i][2] = temp_dfa_tran[i][0]
+
             k = 0
             check_tran = True
             while check_tran == True:
                 if k < len(temp_tran) and \
-                temp_tran[k][0] in i[0] and \
-                temp_tran[k][1] == i[1] and \
-                temp_tran[k][2] == i[2]:
+                temp_tran[k][0] in temp_dfa_tran[i][0] and \
+                temp_tran[k][1] == temp_dfa_tran[i][1] and \
+                temp_tran[k][2] == temp_dfa_tran[i][2]:
                     temp_tran.pop(k)
                 else:
-                    if temp_tran[k][2] in i[0]:
-                        temp_tran[k][2] = i[0]
+                    if k < len(temp_tran) and temp_tran[k][2] in temp_dfa_tran[i][0]:
+                        temp_tran[k][2] = temp_dfa_tran[i][0]
+                    if k < len(temp_tran) and temp_tran[k][0] in temp_dfa_tran[i][0]:
+                        temp_tran[k][0] = temp_dfa_tran[i][0]
                     if k < len(temp_tran) - 1:
                         k += 1
                     else:
                         check_tran = False
+
+        # remove transition loop
+        count = 1
+        for i in temp_tran:
+            lenght = len(temp_tran) - 1
+            for j in range(count, lenght):
+                if i == temp_tran[j]:
+                    temp_tran.pop(j)
+                lenght = len(temp_tran) - 1
+            count += 1
+
+        for i in range(len(temp_dfa_tran)):
+            for j in range(len(temp_dfa_tran)):
+                if temp_trandfa[j][2] in temp_dfa_tran[i][0]:
+                    temp_trandfa[j][2] = temp_dfa_tran[i][0]
+            dfa.transitions.append(temp_dfa_tran[i])
 
         # add to transition in dfa transition
         for i in temp_tran:
@@ -325,13 +364,16 @@ def dfaMinimization( startState, finalStates, states, alphabet, transitions):
 
     return dfa
 
-if __name__ == '__main__':
-    print( "Automation input: " )
-    automaton = automatonData('t1.txt')
-    automaton.printAutomation()
+# if __name__ == '__main__':
+print( "Automation input: " )
+# automaton = automatonData('test1.txt')
+# automaton = automatonData('test2.txt')
+# automaton = automatonData('test3.txt')
+automaton = automatonData('test4.txt')
+# automaton.printAutomation()
 
-    print('----------------------------------------------')
+print('----------------------------------------------')
 
-    print( "Deterministic Finite Automaton Minimization" )
-    dfa = dfaMinimization(automaton.startState, automaton.finalStates, automaton.states, automaton.alphabet, automaton.transitions)
-    dfa.printAutomation()
+print( "Deterministic Finite Automaton Minimization" )
+dfa = dfaMinimization(automaton.startState, automaton.finalStates, automaton.states, automaton.alphabet, automaton.transitions)
+dfa.printAutomation()
