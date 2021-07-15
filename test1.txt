@@ -1,0 +1,18 @@
+a
+c 
+a 0 b
+a 1 f
+b 1 c
+b 0 g
+e 1 f
+e 0 h
+f 0 c
+f 1 g
+g 1 e
+g 0 g
+c 0 a
+c 1 c
+d 0 c
+d 1 g
+h 1 c
+h 0 g
