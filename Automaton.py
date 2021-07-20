@@ -1,3 +1,6 @@
+import Data as dt
+
+
 class Automaton:
     def __init__(self, startState=None, finalStates=None, states=None, alphabet=None, transitions=None):
         """
@@ -38,3 +41,24 @@ class Automaton:
                     print('\tdelta {}: {}'.format(j, automaton[i][j]))
             else:
                 print('+ {}: {}'.format(i, automaton[i]))
+
+# Input data in otomat
+def automatonData(filename):
+    fileData = dt.opendFileInput(filename)
+    ndftData = dt.ndfInput(fileData)
+
+    automaton = Automaton()
+
+    for i in ndftData:
+        if i == 'startState':
+            automaton.startState = ndftData[i]
+        elif i == 'finalStates':
+            automaton.finalStates = ndftData[i]
+        elif i == 'states':
+            automaton.states = ndftData[i]
+        elif i == 'alphabet':
+            automaton.alphabet = ndftData[i]
+        elif i == 'transitions':
+            automaton.transitions = ndftData[i]
+
+    return automaton

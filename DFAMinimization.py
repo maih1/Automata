@@ -3,28 +3,6 @@ import Data as dt
 import Automaton as at
 
 
-# Input data in otomat
-def automatonData(filename):
-    fileData = dt.opendFileInput(filename)
-    ndftData = dt.ndfInput(fileData)
-
-    automaton = at.Automaton()
-
-    for i in ndftData:
-        if i == 'startState':
-            automaton.startState = ndftData[i]
-        elif i == 'finalStates':
-            automaton.finalStates = ndftData[i]
-        elif i == 'states':
-            automaton.states = ndftData[i]
-        elif i == 'alphabet':
-            automaton.alphabet = ndftData[i]
-        elif i == 'transitions':
-            automaton.transitions = ndftData[i]
-
-    return automaton
-
-
 # find Unreachable State
 def findUnreachableState(states, startState, transitions):
     state_unreachable = []
@@ -419,10 +397,10 @@ def dfaMinimization(startState, finalStates, states, alphabet, transitions):
 
 if __name__ == '__main__':
     print("Automation input: ")
-    automaton = automatonData('test1.txt')
-    # automaton = automatonData('test2.txt')
-    # automaton = automatonData('test3.txt')
-    # automaton = automatonData('test4.txt')
+    automaton = at.automatonData('test1.txt')
+    # automaton = at.automatonData('test2.txt')
+    # automaton = at.automatonData('test3.txt')
+    # automaton = at.automatonData('test4.txt')
 
     print('----------------------------------------------')
 
