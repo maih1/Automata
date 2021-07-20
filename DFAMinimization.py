@@ -439,14 +439,17 @@ def dfaMinimization(startState, finalStates, states, alphabet, transitions):
                     j[2] = i
 
         # remove transition loop
-        count = 1
-        for i in temp_tran:
-            length = len(temp_tran) - 1
-            for j in range(count, length):
-                if i == temp_tran[j]:
+        i = 0
+        while i < len(temp_tran) - 1:
+            ii = temp_tran[i]
+            j = i + 1
+            while j < len(temp_tran):
+                jj = temp_tran[j]
+
+                if ii == jj:
                     temp_tran.pop(j)
-                length = len(temp_tran) - 1
-            count += 1
+                else: j += 1
+            i += 1
 
         # add to transition in dfa transition
         for i in temp_tran:
@@ -457,10 +460,10 @@ def dfaMinimization(startState, finalStates, states, alphabet, transitions):
 
 if __name__ == '__main__':
     print("Automation input: ")
-    automaton = automatonData('test1.txt')
+    # automaton = automatonData('test1.txt')
     # automaton = automatonData('test2.txt')
     # automaton = automatonData('test3.txt')
-    # automaton = automatonData('test4.txt')
+    automaton = automatonData('test4.txt')
 
     print('----------------------------------------------')
 
