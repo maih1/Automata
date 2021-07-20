@@ -356,9 +356,8 @@ def getListEquivalenceStates(listState):
 
     return listEqui
 
+
 # list equivalence states
-
-
 def dfaMinimization(startState, finalStates, states, alphabet, transitions):
     # Get equivalence states
     listState = getPartition(startState, finalStates,
@@ -456,18 +455,16 @@ def dfaMinimization(startState, finalStates, states, alphabet, transitions):
     return dfa
 
 
-#     return ls_same_partition
-# if __name__ == '__main__':
-print("Automation input: ")
-automaton = automatonData('test1.txt')
-# automaton = automatonData('test2.txt')
-# automaton = automatonData('test3.txt')
-# automaton = automatonData('test4.txt')
+if __name__ == '__main__':
+    print("Automation input: ")
+    automaton = automatonData('test1.txt')
+    # automaton = automatonData('test2.txt')
+    # automaton = automatonData('test3.txt')
+    # automaton = automatonData('test4.txt')
 
-print('----------------------------------------------')
+    print('----------------------------------------------')
 
-print("Deterministic Finite Automaton Minimization")
-dfa = dfaMinimization(automaton.startState, automaton.finalStates,
-                      automaton.states, automaton.alphabet, automaton.transitions)
-dfa.printAutomation()
-# bug
+    print("Deterministic Finite Automaton Minimization")
+    dfa = dfaMinimization(automaton.startState, automaton.finalStates,
+                        automaton.states, automaton.alphabet, automaton.transitions)
+    dfa.printAutomation()
