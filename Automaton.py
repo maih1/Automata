@@ -62,3 +62,26 @@ def automatonData(filename):
             automaton.transitions = ndftData[i]
 
     return automaton
+
+# find transition of state x
+def findTransitions(x, transitions, alphabet):
+    listFind = []
+    check = True
+    length = 0
+    t = 0
+    
+    while check == True and length < len(transitions):
+        i = transitions[length]
+        dataFind = []
+        
+        if x == i[0]:
+            for j in range(1, len(i)):
+                dataFind.append(i[j])
+            listFind.append(tuple(dataFind))
+            t += 1
+        
+        if t == len(alphabet):
+            check = False
+        else: length += 1
+             
+    return listFind

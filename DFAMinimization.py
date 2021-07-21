@@ -47,20 +47,6 @@ def removeUnreachableTransition(state_unreachable, transitions):
     return temp_tran
 
 
-# find transition of state x
-def findTransitions(x, transitions):
-    listFind = []
-
-    for i in transitions:
-        dataFind = []
-        if x == i[0]:
-            dataFind.append(i[1])
-            dataFind.append(i[2])
-            listFind.append(tuple(dataFind))
-
-    return listFind
-
-
 # check if two arrays are equal
 def checkListEqual(ls1, ls2):
     count = 0
@@ -262,7 +248,7 @@ def getPartition(startState, finalStates, states, alphabet, transitions):
                     for j in i:
                         temp_i.append(j)
                         temp_tran_i.append(
-                            (j, findTransitions(j, transitions)))
+                            (j, at.findTransitions(j, transitions, alphabet)))
 
                 # For subclasses less than 2 states, 
                 # new partitions can be added
@@ -315,6 +301,7 @@ def dfaMinimization(startState, finalStates, states, alphabet, transitions):
     else:
         check_start = True
         start_index = 0
+        
         while check_start == True and start_index <= len(list_equi):
             if start_index < len(list_equi) and startState in list_equi[start_index] and check_start == True:
                 dfa.startState = tuple(list_equi[start_index])
@@ -323,6 +310,8 @@ def dfaMinimization(startState, finalStates, states, alphabet, transitions):
                 start_index += 1
             else:
                 check_start = False
+        if dfa.startState == None:
+            dfa.startState = startState
 
     # new final states
     if len(list_equi) == 0:
@@ -397,10 +386,13 @@ def dfaMinimization(startState, finalStates, states, alphabet, transitions):
 
 if __name__ == '__main__':
     print("Automation input: ")
+    # automaton = at.automatonData('test1.txt')
+
     automaton = at.automatonData('./Data/testdfamin1.txt')
     # automaton = at.automatonData('./Data/testdfamin2.txt')
     # automaton = at.automatonData('./Data/testdfamin3.txt')
     # automaton = at.automatonData('./Data/testdfamin4.txt')
+    automaton.printAutomation()
 
     print('----------------------------------------------')
 

@@ -19,8 +19,6 @@ def ndfInput(filedata):
     alphabet = []
     transitions = []
 
-    count = 0
-
     for i in range(len(filedata)):
         if i == 0:
             startState = filedata[i][0]
@@ -34,8 +32,6 @@ def ndfInput(filedata):
             states.append(filedata[i][0])
             alphabet.append(filedata[i][1])
             transitions.append(filedata[i])
-
-            count += 1
         
     ndftData = {
         'startState': startState,
