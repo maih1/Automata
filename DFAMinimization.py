@@ -293,29 +293,29 @@ def dfaMinimization(startState, finalStates, states, alphabet, transitions):
     state_unreachable = findUnreachableState(states, startState, transitions)
 
     # create new automat/dfa
-    dfa = at.Automaton()
+    dfa_min = at.Automaton()
 
     # new start state
     if len(list_equi) == 0:
-        dfa.startState = startState
+        dfa_min.startState = startState
     else:
         check_start = True
         start_index = 0
         
         while check_start == True and start_index <= len(list_equi):
             if start_index < len(list_equi) and startState in list_equi[start_index] and check_start == True:
-                dfa.startState = tuple(list_equi[start_index])
+                dfa_min.startState = tuple(list_equi[start_index])
                 check_start = False
             elif start_index < len(list_equi) - 1:
                 start_index += 1
             else:
                 check_start = False
-        if dfa.startState == None:
-            dfa.startState = startState
+        if dfa_min.startState == None:
+            dfa_min.startState = startState
 
     # new final states
     if len(list_equi) == 0:
-        dfa.finalStates = finalStates
+        dfa_min.finalStates = finalStates
     else:
         dfa_final = []
 
@@ -334,24 +334,24 @@ def dfaMinimization(startState, finalStates, states, alphabet, transitions):
                     else:
                         final_index += 1
 
-        dfa.finalStates = list(set(dfa_final))
+        dfa_min.finalStates = list(set(dfa_final))
 
     # new dfa states
     temp_states = states.copy()
     for i in state_unreachable:
         temp_states.remove(i)
 
-    dfa.states = temp_states
+    dfa_min.states = temp_states
 
     # new dfa alphabet
-    dfa.alphabet = alphabet
+    dfa_min.alphabet = alphabet
 
     # new transitions
-    dfa.transitions = []
+    dfa_min.transitions = []
 
     # if the list is empty dfa transition equals input automat transition
     if len(list_equi) == 0:
-        dfa.transitions = transitions.copy()
+        dfa_min.transitions = transitions.copy()
     else:
         temp_list_equi = list_equi.copy()
         temp_tran = removeUnreachableTransition(state_unreachable, transitions)
@@ -379,9 +379,9 @@ def dfaMinimization(startState, finalStates, states, alphabet, transitions):
 
         # add to transition in dfa transition
         for i in temp_tran:
-            dfa.transitions.append(i)
+            dfa_min.transitions.append(i)
 
-    return dfa
+    return dfa_min
 
 
 if __name__ == '__main__':
