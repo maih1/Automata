@@ -386,12 +386,10 @@ def dfaMinimization(startState, finalStates, states, alphabet, transitions):
 
 if __name__ == '__main__':
     print("Automation input: ")
-    # automaton = at.automatonData('test1.txt')
-
-    automaton = at.automatonData('./Data/testdfamin1.txt')
-    # automaton = at.automatonData('./Data/testdfamin2.txt')
-    # automaton = at.automatonData('./Data/testdfamin3.txt')
-    # automaton = at.automatonData('./Data/testdfamin4.txt')
+    automaton = at.automatonData('./Data/DfaMin/testdfamin1.txt')
+    # automaton = at.automatonData('./Data/DfaMin/testdfamin2.txt')
+    # automaton = at.automatonData('./Data/DfaMin/testdfamin3.txt')
+    # automaton = at.automatonData('./Data/DfaMin/testdfamin4.txt')
     automaton.printAutomation()
 
     print('----------------------------------------------')
