@@ -27,8 +27,7 @@ def ndfInput(filedata):
             finalStartes = filedata[i]
             for j in filedata[i]:
                 states.append(j)
-        else:
-            
+        else:            
             states.append(filedata[i][0])
             alphabet.append(filedata[i][1])
             transitions.append(filedata[i])
@@ -42,3 +41,24 @@ def ndfInput(filedata):
     }
 
     return ndftData
+
+def ckyInput(filedata): 
+    sentence = []
+    startSymbol = []
+    grammar = []
+
+    for i in range(len(filedata)):
+        if i == 0:
+            sentence = filedata[i]
+        elif i == 1:
+            startSymbol = filedata[i]
+        else:
+            grammar.append(filedata[i])
+
+    cky_data = {
+        'sentence': sentence,
+        'startSymbol': startSymbol,
+        'grammar': grammar,
+    }
+
+    return cky_data
