@@ -51,7 +51,7 @@ def ckyInput(filedata):
         if i == 0:
             sentence = filedata[i]
         elif i == 1:
-            startSymbol = filedata[i]
+            startSymbol = filedata[i][0]
         else:
             grammar.append(filedata[i])
 
