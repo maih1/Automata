@@ -62,3 +62,39 @@ def ckyInput(filedata):
     }
 
     return cky_data
+
+def cnfInput(filedata):
+    # main alphabet/end symbols set
+    # bảng chữ cái chính/bộ ký hiệu kết thúc
+    mainAlphabet = []
+
+    # sub-alphabet/the symbol set doesn't end or variable set
+    # bảng chữ cái phụ/tập ký hiệu không kết hay tập biến
+    subAlphabet = []
+
+    # start symbol
+    # Ký tự suất phát/tiên đề
+    startSymbol = ''
+
+    # finite set of rules
+    # Tập quy tắc hữu hạn/quy tắc sinh
+    rules = []
+
+    for i in range(len(filedata)):
+        if i == 0:
+            mainAlphabet = filedata[i]
+        elif i == 1:
+            subAlphabet = filedata[i]
+        elif i == 2:
+            startSymbol = filedata[i][0]
+        else:
+            rules.append(filedata[i])
+
+    cnf_data = {
+        'mainAlphabet': mainAlphabet,
+        'subAlphabet': subAlphabet,
+        'startSymbol': startSymbol,
+        'rules': rules,
+    }
+
+    return cnf_data
