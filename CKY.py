@@ -1,16 +1,4 @@
-import CNF 
-
-# set type grammar/rules
-def setType(grammar):
-    new_grammar = []
-
-    for i in grammar:
-        set_list = []
-        for j in range(1, len(i)):
-            set_list.append(i[j])
-        new_grammar.append([i[0], set_list])
-    
-    return new_grammar
+import InputCNF as CNF
 
 # Create table/list cky
 # Tạo bảng cky
@@ -82,7 +70,7 @@ def cky(sentence, grammar):
     ls_cky = listCheckCky(length)
     
     # change type set of rules
-    grammar = setType(grammar)
+    grammar = CNF.setType(grammar)
 
     # loop diagonally in the table cky
     # lặp theo đường chéo trong bảng cky
