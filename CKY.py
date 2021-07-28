@@ -188,8 +188,8 @@ def printMainCky(sentence, new_sentence, grammar, startSymbol):
 
 # main
 if __name__ == "__main__":
-    cky_data = CNF.ckyData1('test1.txt')
-    # cky_data = CNF.ckyData1('test2.txt')
+    cky_data = CNF.ckyData1('./Data/CKY/test1.txt')
+    # cky_data = CNF.ckyData1('./Data/CKY/test2.txt')
 
     # rewrite the sentence
     new_sentence = cky_data.rewriteSentence()

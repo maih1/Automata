@@ -1,0 +1,7 @@
+a a b b b b
+S
+S -> ZY
+Z -> XS
+S -> YY
+X -> a
+Y -> b
