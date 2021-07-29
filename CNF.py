@@ -288,12 +288,40 @@ def nonDerivable(mainAlphabet, subAlphabet, startSymbol, rules, cnf):
 # Lấy ra quy tắc dạng A -> a, A -> BC
 def getRulesStandard(mainAlphabet, subAlphabet, rules):
     new_rules = []
+    up_rules = []
+
     for i in rules:
-        if i[0] in subAlphabet:
-            # kiểm tra vế phải là nhỏ hơn 2 ký tự và chỉ thuộc bảng ký hiệu phụ
-            lenght_sym = len(i[1])
-            check_sub = lenght_sym <= 2 & i[1]
+        # if i[0] in subAlphabet:
+        new_ls_right = []
+        for j in i[1]:
             # Kiểm tra vế phải chỉ là 1 ký tự và thuộc bảng chữ cái chính
+            if len(j) == 1 and j in mainAlphabet:
+                new_ls_right.append(j)
+
+            # kiểm tra vế phải là 2 ký tự và chỉ thuộc bảng ký hiệu phụ
+            elif len(j) == 2:
+                ls_split = splitString(j)
+                check_up = True
+                
+                if ls_split[0] in subAlphabet and ls_split[1] in subAlphabet:
+                    new_ls_right.append(j)
+        # add new rules
+        if len(new_ls_right) > 0:
+            # Các quy tắc chuẩn
+            new_rules.append([i[0], new_ls_right])
+
+            # Các quy tắc chưa chuẩn
+            dis = list(set(i[1]) -set(new_ls_right))
+            if len(dis) > 0:
+                up_rules.append([i[0], dis])
+        else:
+            up_rules.append(i)
+
+    # Trả về một bộ 2 tập quy tắc
+    # Tập quy tắc đầu đax thuộc dạng chuẩn
+    # Tập quy tắc cuối chưa đạt chuẩn
+    return new_rules, up_rules
+
 
 def updateRules(mainAlphabet, subAlphabet, startSymbol, rules):
     rules = cp.deepcopy(rules)
@@ -317,3 +345,5 @@ c = varNotTer(cnf_data.mainAlphabet, cnf_data.subAlphabet, b, cnf_data)
 # print(c)
 d = nonDerivable(c.mainAlphabet, c.subAlphabet, c.startSymbol, c.rules, c)
 d.printCNF()
+
+e = getRulesStandard(d.mainAlphabet, d.subAlphabet, d.rules)
