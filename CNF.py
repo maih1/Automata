@@ -94,6 +94,9 @@ def rmNullRules(rules):
 
     return rules
 
+# Removal of Unit Productions
+# Xóa quy tắc đơn
+
 # Lấy ra vế phải của một quy tắc cần tìm
 def getRightSide(rules, sym):
     ls = []
@@ -105,13 +108,8 @@ def getRightSide(rules, sym):
 
     return ls
 
-# Removal of Unit Productions
-# Xóa quy tắc đơn
-# Quy tắc đơn có dạng A -> B, AB không thuộc bảng ký hiệu phụ
-def rmUnitRules(rules, subAlphabet):
-    # Bộ quy tắc đã được xóa đi quy tắc rỗng
-    new_rules = cp.deepcopy(rules)
-
+# Lấy ra vế trái của các quy tắc đơn
+def getLeftUnit(rules, subAlphabet):
     # Lấy ra vế trái của các quy tắc đơn
     ls_left_sig = []
     for i in rules:
@@ -122,34 +120,58 @@ def rmUnitRules(rules, subAlphabet):
         
         if len(temp_right) > 0:
             ls_left_sig.append([i[0], temp_right])
-    
-    # temp_new_rules = ls_left_sig.copy()
+
+    return ls_left_sig
+
+# Removal of Unit Productions
+# Xóa quy tắc đơn
+# Quy tắc đơn có dạng A -> B, AB không thuộc bảng ký hiệu phụ
+def rmUnitRules(new_rules, subAlphabet, ls_left_sig):
+    # Kiểm tra có tồn tại quy tắc đơn không
+    # Nếu không có quy tắc đơn nào thì trả về bộ quy tăc
     if len(ls_left_sig) == 0:
         return new_rules
+
+    # Nếu còn quy tắc đơn thì xóa và cập nhật lại bộ quy tắc
     else: 
         # Xoa tung quy tac don
-        for i in ls_left_sig:
-            for j in i[1]:
+        i = 0
+        while i < len(ls_left_sig):
+        # for i in ls_left_sig:
+            for j in ls_left_sig[i][1]:
                 # Lấy ra vế phải từ vế trái của quy tắc đơn
-                get_right = getRightSide(rules, j)
+                get_right = getRightSide(new_rules, j)
 
                 # Thay thế vế phải của quy tắc đơn
                 k = 0
                 check = True
-                while check and k < len(rules):
-                    if i[0] == new_rules[k][0]:
+                while check and k < len(new_rules):
+                    if ls_left_sig[i][0] == new_rules[k][0]:
+                        # Xóa phần vế phải của quy tắc đơn
+                        id_l = 0
+                        c_l = True
+                        while c_l == True and id_l < len(new_rules[k][1]):
+                            if new_rules[k][1][id_l] == j:
+                                new_rules[k][1].pop(id_l)
+                                c_l = False
+                            else: id_l += 1
+
                         for gr in get_right:
                             new_rules[k][1].append(gr)
                         
-                        # Xóa phần vế phải của quy tắc đơn
-                        new_rules[k][1].remove(j)
-
-                        # Tìm và xóa đi quy tắc đơn trong bộ quy tắc mới (đệ quy)
-                        rmUnitRules(new_rules, subAlphabet)
                         check = False
                     else: k += 1
+            ls_left_sig.pop(i)
 
-        return new_rules
+        # Cập nhật lại các quy tắc đơn trong bộ quy tắc
+        ls_left_sig = getLeftUnit(new_rules, subAlphabet)
+
+        # Đệ quy
+        return rmUnitRules(new_rules, subAlphabet, ls_left_sig)
+
+
+# Removal of Useless rule
+# loại bỏ các qui tắc dư thừa
 
 # Loại bỏ quy tắc/biến vô sinh
 # Những biến không dẫn ra được xâu kết thúc được gọi là biến vô sinh
@@ -166,7 +188,6 @@ def varNotTer(mainAlphabet, subAlphabet, rules, cnf):
                 ls_ter.append(j[0])
     
     ls_ter = sorted(list(set(ls_ter)))
-    print(ls_ter)
 
     # Thêm vào quy tắc mà vế phải có ký tự nằm trong bảng chữ cái chính và ls ter
     for i in rules:
@@ -262,13 +283,11 @@ def nonDerivable(mainAlphabet, subAlphabet, startSymbol, rules, cnf):
     cnf.rules = new_rules
 
     return cnf
-# Removal of Useless rule
-# loại bỏ các qui tắc dư thừa
-def rmUselessRule():
-    pass
+
 
 # Lấy ra quy tắc dạng A -> a, A -> BC
 def getRulesStandard(mainAlphabet, subAlphabet, rules):
+    new_rules = []
     for i in rules:
         if i[0] in subAlphabet:
             # kiểm tra vế phải là nhỏ hơn 2 ký tự và chỉ thuộc bảng ký hiệu phụ
@@ -281,18 +300,20 @@ def updateRules(mainAlphabet, subAlphabet, startSymbol, rules):
     new_rules = rmNullRules(rules)
 
 # cnf_data = ICNF.cnfData('test1.txt')
-# cnf_data = ICNF.cnfData('test2.txt')
-cnf_data = ICNF.cnfData('test3.txt')
+cnf_data = ICNF.cnfData('test2.txt')
+# cnf_data = ICNF.cnfData('test3.txt')
 # cnf_data = ICNF.cnfData('test4.txt')
 # cnf_data = ICNF.cnfData('test5.txt')
 # cnf_data.printCNF()
 rules = ICNF.setType(cnf_data.rules)
 
 a = rmNullRules(rules)
-print(a)
-b = rmUnitRules(a, cnf_data.subAlphabet)
-print(b)
+# print(a)
+
+b_1 = getLeftUnit(a, cnf_data.subAlphabet)
+b = rmUnitRules(a, cnf_data.subAlphabet, b_1)
+# print(b)
 c = varNotTer(cnf_data.mainAlphabet, cnf_data.subAlphabet, b, cnf_data)
-print(c)
+# print(c)
 d = nonDerivable(c.mainAlphabet, c.subAlphabet, c.startSymbol, c.rules, c)
 d.printCNF()
