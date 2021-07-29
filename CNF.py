@@ -397,6 +397,88 @@ def transRightMainSub(tup_rules, mainAlphabet, subAlphabet):
     return new_tup
     
 
+# Transform the rules where the right side has length greater than 2
+# Biến đổi các quy tắc mà vế phải có độ dài lớn hơn 2
+def transRightGeater2(tup_rules):
+    temp_tup = cp.deepcopy(tup_rules)
+    new_ls_rules = temp_tup[0]
+    new_sub = temp_tup[2]
+
+    # Biến đổi quy tắc mà vế phải có số ký tự lớn hơn 2
+    temp_new_ls_rules = []
+    for i in temp_tup[1]:
+
+        temp_right_rules = []
+
+        for j in i[1]:
+
+            ls_split = splitString(j)
+    
+            # Thêm vào m - 2 ký tự phụ
+            k = 0
+            length = len(ls_split) - 1
+            while k < length:
+                # Thêm vào ký tự phụ thứ k đến m - 2, m = độ dài vế phải
+                sub_i = 'C_(' + str(k) + ')'
+                if sub_i not in new_sub and (k + length) != len(ls_split):
+                    new_sub.append(sub_i)
+                # Thêm vào quy tắc tương ứng với ký tự phụ mới
+                if k == 0:
+                    meg = megString([ls_split[k], sub_i])
+                    # new_rulse_i = [i[0], [meg]]
+
+                    if meg not in temp_right_rules:
+                        temp_right_rules.append(meg)
+            
+                elif (k + length) == len(ls_split):
+                    sub_i = 'C_(' + str(k - 1) + ')'
+                    meg = megString([ls_split[k],ls_split[k+1]])
+                    new_rulse_i = [sub_i, [meg]]
+
+                    if new_rulse_i not in temp_new_ls_rules:
+                        temp_new_ls_rules.append(new_rulse_i)
+                    # else:
+                else:
+                    sub_next_i = 'C_(' + str(k+1) + ')'
+                    meg = megString([ls_split[k],sub_next_i])
+                    new_rulse_i = [sub_i, [meg]]
+                    
+                    if new_rulse_i not in temp_new_ls_rules:
+                        temp_new_ls_rules.append(new_rulse_i)
+
+                k += 1
+        # Cập nhật lại vế phải quy tắc i
+        if len(temp_right_rules) > 0:
+            temp_right_rules = list(set(temp_right_rules))
+            for nr in new_ls_rules:
+                if nr[0] == i[0]:
+                    for gr in temp_right_rules:
+                        nr[1].append(gr)
+
+    # Cập nhật thêm các quy tắc mới cho bộ quy tắc
+    copy_ls_rules = cp.deepcopy(temp_new_ls_rules)
+    i = 0
+    while i < len(temp_new_ls_rules):
+        new_rigt_rules = [temp_new_ls_rules[i][1][0]]
+        j = i+1
+        
+        while j < len(temp_new_ls_rules):
+            if temp_new_ls_rules[i][0] == temp_new_ls_rules[j][0]:
+                new_rigt_rules.append(temp_new_ls_rules[j][1][0])
+                temp_new_ls_rules.pop(j)
+            else: j += 1
+        
+        new_ls_rules.append([temp_new_ls_rules[i][0], new_rigt_rules])
+        temp_new_ls_rules.pop(i)
+        
+    # Trả về giá trị một bộ gồm
+    # 0-Các quy tắc đạt chuẩn
+    # 1-Bảng ký hiệu phụ mới
+
+    return (new_ls_rules, new_sub)
+
+# Chomsky Normal Form
+# Văn phạm theo dạng chuẩn Chomsky
 def updateRules(mainAlphabet, subAlphabet, startSymbol, rules):
     rules = cp.deepcopy(rules)
     new_rules = rmNullRules(rules)
@@ -422,3 +504,4 @@ d.printCNF()
 
 e = getRulesStandard(d.mainAlphabet, d.subAlphabet, d.rules)
 f = transRightMainSub(e, d.mainAlphabet, d.subAlphabet)
+g = transRightGeater2(f, d.mainAlphabet)
