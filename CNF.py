@@ -694,11 +694,11 @@ def cnf(_cnf):
 if __name__ == '__main__':
     # input data
     print('Input grammar:')
-    cnf_data = ICNF.cnfData('test1.txt')
-    # cnf_data = ICNF.cnfData('test2.txt')
-    # cnf_data = ICNF.cnfData('test3.txt')
-    # cnf_data = ICNF.cnfData('test4.txt')
-    # cnf_data = ICNF.cnfData('test5.txt')
+    cnf_data = ICNF.cnfData('./Data/CNF/test1.txt')
+    # cnf_data = ICNF.cnfData('./Data/CNF/test2.txt')
+    # cnf_data = ICNF.cnfData('./Data/CNF/test3.txt')
+    # cnf_data = ICNF.cnfData('./Data/CNF/test4.txt')
+    # cnf_data = ICNF.cnfData('./Data/CNF/test5.txt')
 
     cnf_data.printCNF()
 

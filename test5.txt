@@ -1,7 +1,0 @@
-a c e
-S A B C
-S
-S AC B
-A a
-C c BC
-E aA

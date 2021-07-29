@@ -1,0 +1,6 @@
+a b
+S A B
+S
+S ASA aB
+A B S
+B b epsilon
