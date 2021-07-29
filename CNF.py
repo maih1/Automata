@@ -1,6 +1,7 @@
 import copy as cp
 import InputCNF as ICNF
 
+
 # tach chuoi
 def splitString(string):
     ls = []
@@ -173,6 +174,12 @@ def rmUnitRules(new_rules, subAlphabet, ls_left_sig):
 # Removal of Useless rule
 # loại bỏ các qui tắc dư thừa
 
+# Remove inanimate rules/variables
+# Step 1 − Include all symbols, W1, that derive some terminal and initialize i=1.
+# Step 2 − Include all symbols, Wi+1, that derive Wi.
+# Step 3 − Increment i and repeat Step 2, until Wi+1 = Wi.
+# Step 4 − Include all production rules that have Wi in it.
+
 # Loại bỏ quy tắc/biến vô sinh
 # Những biến không dẫn ra được xâu kết thúc được gọi là biến vô sinh
 def varNotTer(mainAlphabet, subAlphabet, rules, cnf):
@@ -240,6 +247,11 @@ def varNotTer(mainAlphabet, subAlphabet, rules, cnf):
 
     return cnf
 
+# Eliminate variables that do not lead to
+# Step 1 − Include the start symbol in Y1 and initialize i = 1.
+# Step 2 − Include all symbols, Yi+1, that can be derived from Yi and include all production rules that have been applied.
+# Step 3 − Increment i and repeat Step 2, until Yi+1 = Yi.
+
 # Loại bỏ nhứng biến không dẫn đến được
 # Những biến không dẫn xuất ra được từ S được gọi là không dẫn đến được
 def nonDerivable(mainAlphabet, subAlphabet, startSymbol, rules, cnf):
@@ -247,15 +259,21 @@ def nonDerivable(mainAlphabet, subAlphabet, startSymbol, rules, cnf):
     new_main = []
     new_rules = []
 
+    # Bắt đầu quy tắc là tiên đề
     _der = [startSymbol]
-    union_sub_main = list(set(mainAlphabet) | set(subAlphabet))
 
+    # Kiểm tra từ biến tiên đề
+    # Thêm vào những quy tắc dẫn ra từ tiên đề
     check = True
     _der_loop = _der.copy()
+
+    # Lặp thêm vào những quy tắc dẫn ra được từ tiên đề và từ những quy tắc dẫn xuất
     while check:
         temp_der = _der.copy()
         new_der = []
 
+        # Tìm những quy tắc dẫn được ra từ tập dẫn xuất
+        # Thêm vào _der vế trái của quy tắc dẫn được
         for i in rules:
             if i[0] in _der_loop:
                 for j in i[1]:
@@ -265,19 +283,27 @@ def nonDerivable(mainAlphabet, subAlphabet, startSymbol, rules, cnf):
 
                         if k not in temp_der:
                             temp_der.append(k)
+
+        # Nếu tập quy tắc tìm được giống tập quy tắc trước đó thì kết thúc vòng lặp
         if _der == temp_der:
             check = False
+
+        # Nếu không cập nhật lại vòng lặp và tiếp tục
         else:
             _der = temp_der
             _der_loop = new_der
                     
+    # Cập nhật lại bảng chữ cái chính, phụ và tập quy tắc sinh 
+    # sau khi loại những quy tắc không dẫn đến được
     new_sub = list(set(subAlphabet) & set(_der))
     new_main = list(set(mainAlphabet) & set(_der))
+    new_main = sorted(new_main)
 
     for i in rules:
         if i[0] in _der:
             new_rules.append(i)
 
+    # Cập nhật lại cnf
     cnf.mainAlphabet = new_main
     cnf.subAlphabet = new_sub
     cnf.rules = new_rules
@@ -320,6 +346,7 @@ def getRulesStandard(mainAlphabet, subAlphabet, rules):
     # Tập quy tắc đầu đax thuộc dạng chuẩn
     # Tập quy tắc cuối chưa đạt chuẩn
     return new_rules, up_rules
+
 
 # The right-hand rule transform contains both major and minor symbols
 # Biến đổi quy tắc vế phải có chứa cả ký hiệu chính và ký hiệu phụ A -> bC
@@ -387,7 +414,7 @@ def transRightMainSub(tup_rules, mainAlphabet, subAlphabet):
     
     # Cập nhật lại bảng ký hiệu phụ
     new_sub = list(set(new_sub))
-
+    new_sub = sorted(new_sub)
     # Trả về giá trị một bộ mới gồm 
     # 0-Quy tắc đạt chuẩn
     # 1-Quy tắc chưa đạt chuẩn
@@ -471,37 +498,62 @@ def transRightGeater2(tup_rules):
         new_ls_rules.append([temp_new_ls_rules[i][0], new_rigt_rules])
         temp_new_ls_rules.pop(i)
         
+    new_sub = sorted(new_sub)
+    
     # Trả về giá trị một bộ gồm
     # 0-Các quy tắc đạt chuẩn
     # 1-Bảng ký hiệu phụ mới
+    new_tup = (new_ls_rules, new_sub)
 
-    return (new_ls_rules, new_sub)
+    return new_tup
 
 # Chomsky Normal Form
 # Văn phạm theo dạng chuẩn Chomsky
-def updateRules(mainAlphabet, subAlphabet, startSymbol, rules):
-    rules = cp.deepcopy(rules)
-    new_rules = rmNullRules(rules)
+def cnf(_cnf):
+    _cnf = cp.deepcopy(_cnf)
+
+    # Thiết lập lại kiểu cho bộ quy tắc
+    rules = ICNF.setType(_cnf.rules)
+
+    # Xóa các quy tắc rỗng
+    rmNull = rmNullRules(rules)
+
+    # Tìm các quy tắc đơn
+    # Lấy ra vế trái của một danh sách các quy tắc đơn
+    getLeft = getLeftUnit(rmNull, _cnf.subAlphabet)
+
+    # Xóa quy tắc đơn
+    rmUnit = rmUnitRules(rmNull, _cnf.subAlphabet, getLeft)
+
+    # Loại bỏ quy tắc/biến vô sinh
+    _cnf = varNotTer(_cnf.mainAlphabet, _cnf.subAlphabet, rmUnit, _cnf)
+
+    # Loại bỏ nhứng quy tắc/biến không dẫn đến được
+    _cnf = nonDerivable(_cnf.mainAlphabet, _cnf.subAlphabet, _cnf.startSymbol, _cnf.rules, _cnf)
+    # d.printCNF()
+
+    # Lấy ra các quy tắc thuộc dạng chuẩn
+    getRules = getRulesStandard(_cnf.mainAlphabet, _cnf.subAlphabet, _cnf.rules)
+    
+    # Biến đổi quy tắc vế phải có chứa cả ký hiệu chính và ký hiệu phụ
+    _transRightMainSub = transRightMainSub(getRules, _cnf.mainAlphabet, _cnf.subAlphabet)
+    
+    # Biến đổi các quy tắc mà vế phải có độ dài lớn hơn 2
+    _transRightGeater2 = transRightGeater2(_transRightMainSub)
+
+    # Cập nhật lại cnf
+    # Cập nhật lại tập quy tắc sinh
+    _cnf.rules = _transRightGeater2[0]
+    # Cập nhật lại bảng ký hiệu phụ
+    _cnf.subAlphabet = _transRightGeater2[1]
+
+    return _cnf
 
 cnf_data = ICNF.cnfData('test1.txt')
 # cnf_data = ICNF.cnfData('test2.txt')
 # cnf_data = ICNF.cnfData('test3.txt')
 # cnf_data = ICNF.cnfData('test4.txt')
 # cnf_data = ICNF.cnfData('test5.txt')
-# cnf_data.printCNF()
-rules = ICNF.setType(cnf_data.rules)
 
-a = rmNullRules(rules)
-# print(a)
-
-b_1 = getLeftUnit(a, cnf_data.subAlphabet)
-b = rmUnitRules(a, cnf_data.subAlphabet, b_1)
-# print(b)
-c = varNotTer(cnf_data.mainAlphabet, cnf_data.subAlphabet, b, cnf_data)
-# print(c)
-d = nonDerivable(c.mainAlphabet, c.subAlphabet, c.startSymbol, c.rules, c)
-d.printCNF()
-
-e = getRulesStandard(d.mainAlphabet, d.subAlphabet, d.rules)
-f = transRightMainSub(e, d.mainAlphabet, d.subAlphabet)
-g = transRightGeater2(f, d.mainAlphabet)
+_cnf = cnf(cnf_data)
+_cnf.printCNF()
