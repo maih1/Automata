@@ -2,8 +2,24 @@ import Automaton as at
 import Data as dt
 import copy as cp
 
+"""
+DFA:
++ Constructing a function of two variables
+    - find a transition function whose destination is many states
++ Define a new set of states
+    -Add transition and state so that automat M is full automat.
++ Define the transfer function
+--------------------------------------------------------------------
++ Xây dựng hàm hai biến
+     - tìm một hàm chuyển tiếp có đích là nhiều trạng thái
++ Xác định một tập hợp các trạng thái mới
+     -Thêm chuyển tiếp và trạng thái để automat M là automat đầy đủ.
++ Xác định chức năng chuyển
+
+"""
 
 # find a transition function whose destination is many states
+# Tìm một hàm chuyển tiếp có đích là nhiều trạng thái
 def findTransMany(transitions):
     des_many_states = []
 
@@ -15,6 +31,7 @@ def findTransMany(transitions):
 
 
 # union of transition next states
+# hợp các trạng thái tiếp theo của quá trình chuyển đổi
 def unionTransState(list_states):
     list_union = []
 
@@ -24,6 +41,7 @@ def unionTransState(list_states):
     return sorted(list_union)
 
 # find transition not save alphabet
+# Tìm hàm chuyển cho một trạng thái và một ký tự trong bảng chữ cái
 def findTransNotAlpha(x, alphabet, transitions):
     listFind = []
     check = True
@@ -47,6 +65,9 @@ def findTransNotAlpha(x, alphabet, transitions):
 
 # Constructing function of two variables
 # Construct the transition function for the dual states
+# xây dựng hàm của hai biến
+# Xây dựng hàm chuyển đổi cho các trạng thái kép
+# T({p1, p2}, a) = T(p1,a) ∪ T(p2,a) = {p2} ∪{p1} = {p1, p2}
 def constructTransitionDual(alphabet, temp_trans, des_many_states):
     # new_trans = findTransMany(transitions)
     union_trans = []
@@ -65,11 +86,13 @@ def constructTransitionDual(alphabet, temp_trans, des_many_states):
                 nextstate_k.append(findTransNotAlpha(k, j, temp_trans))
             
             # union of transition states and add transiton in new list
+            # hợp các trạng thái chuyển đổi và thêm chuyển đổi trong danh sách mới
             union_trans.append([nextState, j, unionTransState(nextstate_k)])
 
     return union_trans
 
 # Get next state
+# Lấy trạng thái chuyển tiếp
 def getNextState(trans_i):
     next_state = []
 
@@ -79,6 +102,7 @@ def getNextState(trans_i):
     return next_state
 
 # Define a new set of states
+# Xác định một tập hợp các trạng thái mới
 def newStates(states, des_many_states, union_trans):
     # create new states
     temp_new_states = states.copy()
@@ -103,6 +127,7 @@ def newStates(states, des_many_states, union_trans):
     return new_states
 
 # update trans
+# Cập nhật lại hàm chuyển
 def updateTrans(des_many_states, union_trans, transitions):
     # create new trans
     new_trans = transitions.copy()
@@ -129,30 +154,36 @@ def updateTrans(des_many_states, union_trans, transitions):
 
     return new_trans
 
-
+# Deterministic Finite Automaton
 # Create dfa
 # set dfa
 def dfa(startState, finalStates, states, alphabet, transitions):
     trans = cp.deepcopy(transitions)
 
     # transition function whose destination is many states
+    # hàm chuyển tiếp có đích là nhiều trạng thái
     des_many_states = findTransMany(trans)
 
     # transition function for the dual states
+    # hàm chuyển tiếp cho các trạng thái kép
     union_trans = constructTransitionDual(alphabet, trans, des_many_states)
 
     # create new automat/dfa
+    # Tạo otomat mới
     dfa = at.Automaton()
 
     # New states
+    # Tạo danh sách trạng thái mới
     temp_states = newStates(states, des_many_states, union_trans)
     temp_states2 = temp_states.copy()
     
     # add transition function for the dual states to transitions
+    # thêm chức năng chuyển tiếp cho các trạng thái kép để chuyển tiếp
     temp_trans = updateTrans(des_many_states, union_trans, trans)
     new_trans = cp.deepcopy(temp_trans)
     
-    # set trans      
+    # set trans 
+    # Thay đổi hàm chuyển đổi     
     for i in temp_states:
         id_trans = 0
 

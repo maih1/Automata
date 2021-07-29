@@ -64,6 +64,7 @@ def automatonData(filename):
     return automaton
 
 # find transition of state x
+# Tìm hàm chuyển của trạng thái x
 def findTransitions(x, transitions, alphabet):
     listFind = []
     check = True
