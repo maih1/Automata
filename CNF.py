@@ -301,7 +301,6 @@ def getRulesStandard(mainAlphabet, subAlphabet, rules):
             # kiểm tra vế phải là 2 ký tự và chỉ thuộc bảng ký hiệu phụ
             elif len(j) == 2:
                 ls_split = splitString(j)
-                check_up = True
                 
                 if ls_split[0] in subAlphabet and ls_split[1] in subAlphabet:
                     new_ls_right.append(j)
@@ -322,13 +321,88 @@ def getRulesStandard(mainAlphabet, subAlphabet, rules):
     # Tập quy tắc cuối chưa đạt chuẩn
     return new_rules, up_rules
 
+# The right-hand rule transform contains both major and minor symbols
+# Biến đổi quy tắc vế phải có chứa cả ký hiệu chính và ký hiệu phụ A -> bC
+def transRightMainSub(tup_rules, mainAlphabet, subAlphabet):
+    temp_tup_rules = cp.deepcopy(tup_rules)
+    new_ls_rules = temp_tup_rules[0]
+    new_ls_up = []
+    new_sub = subAlphabet.copy()
+
+    # kiểm tra các quy tắc gồm cả ký tự chính và phụ
+    for i in temp_tup_rules[1]:
+        left_new_ls_up = []
+        temp_new_ls_rules = []
+
+        for rg in i[1]:
+            ls_split = splitString(rg)
+            
+            # Tìm những quy tắc gồm cả chính và phụ
+            j = 0
+            _ms = True
+            check_ms = True
+
+            while check_ms == True and j < len(ls_split):
+                if ls_split[j] in mainAlphabet:
+                    _ms = True
+                    check_ms = False
+                elif ls_split[j] in subAlphabet:
+                    _ms = False
+                    j += 1
+
+            if _ms == False:
+                # add right side of tules not standar
+                # Thêm vế phải của tập quy tắc chưa đạt chuẩn (dạng: ABC)
+                left_new_ls_up.append(rg)
+            else:
+                update_rules = ''
+
+                for sp in range(len(ls_split)):
+                    if ls_split[sp] in mainAlphabet:
+                        # Thêm ký hiệu phụ mới C_i
+                        sub_i = 'C_(' + ls_split[sp] + ')'
+                        new_sub.append(sub_i)
+
+                        # Thêm quy tắc mới
+                        new_rules_i = [sub_i, [ls_split[sp]]]
+                        if new_rules_i not in new_ls_rules:
+                            new_ls_rules.append(new_rules_i)
+
+                        # Cập nhật lại quy tắc cũ
+                        ls_split[sp] = sub_i
+                        meg = megString(ls_split)
+                        update_rules = meg
+                
+                temp_new_ls_rules.append(update_rules)
+        # Thêm vào quy tắc chưa đạt chuẩn
+        if len(left_new_ls_up) > 0:
+            new_ls_up.append([i[0], left_new_ls_up])
+
+        # Thêm vào quy tắc đã đạt chuẩn
+        if len(temp_new_ls_rules) > 0:
+            for nr in new_ls_rules:
+                if i[0] == nr[0]:
+                    for rgn in temp_new_ls_rules:
+                        nr[1].append(rgn)
+    
+    # Cập nhật lại bảng ký hiệu phụ
+    new_sub = list(set(new_sub))
+
+    # Trả về giá trị một bộ mới gồm 
+    # 0-Quy tắc đạt chuẩn
+    # 1-Quy tắc chưa đạt chuẩn
+    # 2-Bảng ký hiệu phụ mới
+    new_tup = (new_ls_rules, new_ls_up, new_sub)
+
+    return new_tup
+    
 
 def updateRules(mainAlphabet, subAlphabet, startSymbol, rules):
     rules = cp.deepcopy(rules)
     new_rules = rmNullRules(rules)
 
-# cnf_data = ICNF.cnfData('test1.txt')
-cnf_data = ICNF.cnfData('test2.txt')
+cnf_data = ICNF.cnfData('test1.txt')
+# cnf_data = ICNF.cnfData('test2.txt')
 # cnf_data = ICNF.cnfData('test3.txt')
 # cnf_data = ICNF.cnfData('test4.txt')
 # cnf_data = ICNF.cnfData('test5.txt')
@@ -347,3 +421,4 @@ d = nonDerivable(c.mainAlphabet, c.subAlphabet, c.startSymbol, c.rules, c)
 d.printCNF()
 
 e = getRulesStandard(d.mainAlphabet, d.subAlphabet, d.rules)
+f = transRightMainSub(e, d.mainAlphabet, d.subAlphabet)
