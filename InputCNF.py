@@ -34,7 +34,7 @@ class CNF:
             if i == 'rules':
                 print('+ rules (P):')
                 for j in range(len(cnf[i])):
-                    a=cnf[i]
+                    
                     if len(cnf[i][j]) > 2:
                         print('\tP{}: '.format(j), end='')
 
@@ -47,6 +47,33 @@ class CNF:
                                 print('{} | '.format(cnf[i][j][k]), end='')
                     else:
                         print('\tP{}: {} -> {}'.format(j, cnf[i][j][0], cnf[i][j][1]))
+            else:
+                print('+ {}: {}'.format(i, cnf[i]))
+        
+    # print data cnf set type rules
+    def printNewCNF(self):
+        cnf = self.cnfForm()
+
+        # print
+        for i in cnf:
+            if i == 'rules':
+                print('+ rules (P):')
+                # for j in range(len(cnf[i])):
+                #     a=cnf[i]
+                j = 0
+                for jj in cnf[i]:
+                    if len(jj[1]) > 1:
+                        print('\tP{}: {} -> '.format(j, jj[0]), end='')
+
+                        for k in range(len(jj[1])):
+                            if k == len(jj[1]) - 1:
+                                print('{}'.format(jj[1][k]))
+                            else:
+                                print('{} | '.format(jj[1][k]), end='')
+                    else:
+                        print('\tP{}: {} -> {}'.format(j, jj[0], jj[1][0]))
+                    
+                    j+=1
             else:
                 print('+ {}: {}'.format(i, cnf[i]))
 

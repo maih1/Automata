@@ -1,15 +1,47 @@
 import copy as cp
 import InputCNF as ICNF
 
+
+def upForm(form, mainAlphabet):
+    for i in mainAlphabet:
+        new_form = 'C_(' + str(i) + ')'
+        # new_form = 'C_(' + str(i) + ')'
+        form.append(new_form)
+    return form
+
 # Split string
-# Tách chuỗi
-def splitString(string):
+# Tách chuỗi 'C_(a)AC_(b)B'
+def splitString(form, string):
     ls = []
+    new_ls = []
 
     for i in string:
         ls.append(i)
+
+    i = 0
+    while i < len(ls):
+        mg = ls[i]
+        j = i + 1
+        check = True
+        while check == True and j < len(ls):
+            if ls[j] not in form and mg not in form:
+                check = False
+            elif len(mg) == 5:
+                check = False
+            else:
+                mg += ls[j]
+                ls.pop(j)
+        new_ls.append(mg)
+        ls.pop(i)
     
-    return ls
+    # i = 0
+    # while i < len(ls):
+    # # for i in rals:
+    #     if ls[i] in form:
+    #         ls.pop(i)
+    #     else: i +=1
+
+    return new_ls
 
 
 # merger string
@@ -56,7 +88,7 @@ def delSym(split_string, sym_eps):
 
 # Removal of Null Productions (epsilon)
 # Xóa quy tắc rỗng
-def rmNullRules(rules):
+def rmNullRules(rules, form):
     new_rules = []
     # rules = ICNF.setType(rules)
     # left side
@@ -86,7 +118,7 @@ def rmNullRules(rules):
 
                 for k in j[1]:
                     # tach cac phan ky tu cua ve phai
-                    slipt_right = splitString(k)
+                    slipt_right = splitString(form, k)
                     new_left_side = delSym(slipt_right, i)
                     if len(new_left_side) > 0:
                         for l in new_left_side:
@@ -175,7 +207,10 @@ def rmUnitRules(new_rules, subAlphabet, ls_left_sig):
                             else: id_l += 1
 
                         for gr in get_right:
-                            new_rules[k][1].append(gr)
+                            if gr not in new_rules[k][1]:
+                                new_rules[k][1].append(gr)
+                        # for gr in get_right:
+                        #     new_rules[k][1].append(gr)
                         
                         check = False
                     else: k += 1
@@ -201,7 +236,7 @@ def rmUnitRules(new_rules, subAlphabet, ls_left_sig):
 
 # Loại bỏ quy tắc/biến vô sinh
 # Những biến không dẫn ra được xâu kết thúc được gọi là biến vô sinh
-def varNotTer(mainAlphabet, subAlphabet, rules, cnf):
+def varNotTer(mainAlphabet, subAlphabet, rules, cnf, form):
     new_sub = []
     new_rules = cp.deepcopy(rules)
     ls_ter = []
@@ -219,7 +254,7 @@ def varNotTer(mainAlphabet, subAlphabet, rules, cnf):
     # Thêm vào quy tắc mà vế phải có ký tự nằm trong bảng chữ cái chính và ls ter
     for i in rules:
         for j in i[1]:
-            ls_split_left_rules = splitString(j)
+            ls_split_left_rules = splitString(form, j)
             check_ter = True
             for k in ls_split_left_rules:
                 if k in mainAlphabet or k in ls_ter:
@@ -243,7 +278,7 @@ def varNotTer(mainAlphabet, subAlphabet, rules, cnf):
             while j < len(new_rules[i][1]):
             # for j in range(len(new_rules[i][1])):
                 s =new_rules[i][1][j]
-                ls_split_left_rules = splitString(new_rules[i][1][j])
+                ls_split_left_rules = splitString(form, new_rules[i][1][j])
                 check_ter = True
                 for k in range(len(ls_split_left_rules)):
                     if ls_split_left_rules[k] in mainAlphabet or ls_split_left_rules[k] in ls_ter:
@@ -260,7 +295,7 @@ def varNotTer(mainAlphabet, subAlphabet, rules, cnf):
 
     # Remove new null rules
     # Xóa bỏ các quy tắc rỗng mới
-    new_rules = rmNullRules(new_rules)
+    new_rules = rmNullRules(new_rules, form)
 
     # New sub-character
     # Bảng ký hiệu phụ mới
@@ -280,7 +315,7 @@ def varNotTer(mainAlphabet, subAlphabet, rules, cnf):
 
 # Loại bỏ nhứng biến không dẫn đến được
 # Những biến không dẫn xuất ra được từ S được gọi là không dẫn đến được
-def nonDerivable(mainAlphabet, subAlphabet, startSymbol, rules, cnf):
+def nonDerivable(mainAlphabet, subAlphabet, startSymbol, rules, cnf, form):
     new_sub = []
     new_main = []
     new_rules = []
@@ -309,7 +344,7 @@ def nonDerivable(mainAlphabet, subAlphabet, startSymbol, rules, cnf):
         for i in rules:
             if i[0] in _der_loop:
                 for j in i[1]:
-                    ls_split = splitString(j)
+                    ls_split = splitString(form, j)
                     for k in ls_split:
                         new_der.append(k)
 
@@ -350,7 +385,7 @@ def nonDerivable(mainAlphabet, subAlphabet, startSymbol, rules, cnf):
 
 # Get a rule of the form A -> a, A -> BC
 # Lấy ra quy tắc dạng A -> a, A -> BC
-def getRulesStandard(mainAlphabet, subAlphabet, rules):
+def getRulesStandard(mainAlphabet, subAlphabet, rules, form):
     new_rules = []
     up_rules = []
 
@@ -367,7 +402,7 @@ def getRulesStandard(mainAlphabet, subAlphabet, rules):
             # check the right hand side is 2 characters and belongs only to the secondary symbol table
             # kiểm tra vế phải là 2 ký tự và chỉ thuộc bảng ký hiệu phụ
             elif len(j) == 2:
-                ls_split = splitString(j)
+                ls_split = splitString(form, j)
                 
                 if ls_split[0] in subAlphabet and ls_split[1] in subAlphabet:
                     new_ls_right.append(j)
@@ -395,10 +430,18 @@ def getRulesStandard(mainAlphabet, subAlphabet, rules):
     
     return new_rules, up_rules
 
+# get Left Rules
+def getLeftRules(rules):
+    left_rules = []
+
+    for i in rules:
+        left_rules.append(i[0])
+    
+    return left_rules
 
 # The right-hand rule transform contains both major and minor symbols
 # Biến đổi quy tắc vế phải có chứa cả ký hiệu chính và ký hiệu phụ A -> bC
-def transRightMainSub(tup_rules, mainAlphabet, subAlphabet):
+def transRightMainSub(tup_rules, mainAlphabet, subAlphabet, form):
     temp_tup_rules = cp.deepcopy(tup_rules)
     new_ls_rules = temp_tup_rules[0]
     new_ls_up = []
@@ -411,7 +454,7 @@ def transRightMainSub(tup_rules, mainAlphabet, subAlphabet):
         temp_new_ls_rules = []
 
         for rg in i[1]:
-            ls_split = splitString(rg)
+            ls_split = splitString(form, rg)
             
             # Find rules that include both primary and secondary
             # Tìm những quy tắc gồm cả chính và phụ
@@ -452,8 +495,10 @@ def transRightMainSub(tup_rules, mainAlphabet, subAlphabet):
                         ls_split[sp] = sub_i
                         meg = megString(ls_split)
                         update_rules = meg
-                
-                temp_new_ls_rules.append(update_rules)
+                if len(ls_split) == 2:
+                    temp_new_ls_rules.append(update_rules)
+                else:
+                    left_new_ls_up.append(update_rules)
         
         # Add non-standard rules
         # Thêm vào quy tắc chưa đạt chuẩn
@@ -488,7 +533,7 @@ def transRightMainSub(tup_rules, mainAlphabet, subAlphabet):
 
 # Transform the rules where the right side has length greater than 2
 # Biến đổi các quy tắc mà vế phải có độ dài lớn hơn 2
-def transRightGeater2(tup_rules):
+def transRightGeater2(tup_rules, form):
     temp_tup = cp.deepcopy(tup_rules)
     new_ls_rules = temp_tup[0]
     new_sub = temp_tup[2]
@@ -502,7 +547,7 @@ def transRightGeater2(tup_rules):
 
         for j in i[1]:
 
-            ls_split = splitString(j)
+            ls_split = splitString(form, j)
 
             # Add m - 2 sub characters
             # Thêm vào m - 2 ký tự phụ
@@ -513,7 +558,7 @@ def transRightGeater2(tup_rules):
                 # Add the kth extra character to m - 2, m = length on the right side
                 # Thêm vào ký tự phụ thứ k đến m - 2, m = độ dài vế phải
                 sub_i = 'C_(' + str(k) + ')'
-                if sub_i not in new_sub and (k + length) != len(ls_split):
+                if sub_i not in new_sub and (k + 2) != len(ls_split):
                     new_sub.append(sub_i)
 
                 # Added new subscript corresponding rule
@@ -525,7 +570,7 @@ def transRightGeater2(tup_rules):
                     if meg not in temp_right_rules:
                         temp_right_rules.append(meg)
             
-                elif (k + length) == len(ls_split):
+                elif (k + 2) == len(ls_split):
                     sub_i = 'C_(' + str(k - 1) + ')'
                     meg = megString([ls_split[k],ls_split[k+1]])
                     new_rulse_i = [sub_i, [meg]]
@@ -533,9 +578,9 @@ def transRightGeater2(tup_rules):
                     if new_rulse_i not in temp_new_ls_rules:
                         temp_new_ls_rules.append(new_rulse_i)
                 else:
-                    sub_next_i = 'C_(' + str(k+1) + ')'
-                    meg = megString([ls_split[k],sub_next_i])
-                    new_rulse_i = [sub_i, [meg]]
+                    sub_back_i = 'C_(' + str(k-1) + ')'
+                    meg = megString([ls_split[k],sub_i])
+                    new_rulse_i = [sub_back_i, [meg]]
                     
                     if new_rulse_i not in temp_new_ls_rules:
                         temp_new_ls_rules.append(new_rulse_i)
@@ -546,10 +591,15 @@ def transRightGeater2(tup_rules):
         # Cập nhật lại vế phải quy tắc i
         if len(temp_right_rules) > 0:
             temp_right_rules = list(set(temp_right_rules))
-            for nr in new_ls_rules:
-                if nr[0] == i[0]:
-                    for gr in temp_right_rules:
-                        nr[1].append(gr)
+            getleft = getLeftRules(new_ls_rules)
+
+            if i[0] in getleft:
+                for nr in new_ls_rules:
+                    if nr[0] == i[0]:
+                        for gr in temp_right_rules:
+                            nr[1].append(gr)
+            else:
+                new_ls_rules.append([i[0], temp_right_rules])
 
     # Update new rules for the rule set
     # Cập nhật thêm các quy tắc mới cho bộ quy tắc
@@ -567,9 +617,9 @@ def transRightGeater2(tup_rules):
         
         new_ls_rules.append([temp_new_ls_rules[i][0], new_rigt_rules])
         temp_new_ls_rules.pop(i)
-        
-    new_sub = sorted(new_sub)
-    
+      
+    new_sub.sort()
+    new_ls_rules.sort()
     # Returns a tuple of
     # 0-Qualified Rules
     #1-New sub-symbol table
@@ -584,14 +634,15 @@ def transRightGeater2(tup_rules):
 # Văn phạm theo dạng chuẩn Chomsky
 def cnf(_cnf):
     _cnf = cp.deepcopy(_cnf)
-
+    form = ['(', ')', '_', 'C_(', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    form = upForm(form, _cnf.mainAlphabet)
     # Reset style for rule set
     # Thiết lập lại kiểu cho bộ quy tắc
     rules = ICNF.setType(_cnf.rules)
 
     # Delete null rules
     # Xóa các quy tắc rỗng
-    rmNull = rmNullRules(rules)
+    rmNull = rmNullRules(rules, form)
 
     # Find single rules
     # Tìm các quy tắc đơn
@@ -606,23 +657,23 @@ def cnf(_cnf):
 
     # Remove inanimate rules/variables
     # Loại bỏ quy tắc/biến vô sinh
-    _cnf = varNotTer(_cnf.mainAlphabet, _cnf.subAlphabet, rmUnit, _cnf)
+    _cnf = varNotTer(_cnf.mainAlphabet, _cnf.subAlphabet, rmUnit, _cnf, form)
 
     # Remove rules / variables that do not lead to the final
     # Loại bỏ nhứng quy tắc/biến không dẫn đến được
-    _cnf = nonDerivable(_cnf.mainAlphabet, _cnf.subAlphabet, _cnf.startSymbol, _cnf.rules, _cnf)
+    _cnf = nonDerivable(_cnf.mainAlphabet, _cnf.subAlphabet, _cnf.startSymbol, _cnf.rules, _cnf, form)
 
     # Get rules of normal form
     # Lấy ra các quy tắc thuộc dạng chuẩn
-    getRules = getRulesStandard(_cnf.mainAlphabet, _cnf.subAlphabet, _cnf.rules)
+    getRules = getRulesStandard(_cnf.mainAlphabet, _cnf.subAlphabet, _cnf.rules, form)
     
     # Transform the right rule that contains both major and minor symbols
     # Biến đổi quy tắc vế phải có chứa cả ký hiệu chính và ký hiệu phụ
-    _transRightMainSub = transRightMainSub(getRules, _cnf.mainAlphabet, _cnf.subAlphabet)
+    _transRightMainSub = transRightMainSub(getRules, _cnf.mainAlphabet, _cnf.subAlphabet, form)
     
     # Transform the rules where the right hand side has length greater than 2
     # Biến đổi các quy tắc mà vế phải có độ dài lớn hơn 2
-    _transRightGeater2 = transRightGeater2(_transRightMainSub)
+    _transRightGeater2 = transRightGeater2(_transRightMainSub, form)
 
     # Update cnf
     # Cập nhật lại cnf
@@ -643,8 +694,8 @@ def cnf(_cnf):
 if __name__ == '__main__':
     # input data
     print('Input grammar:')
-    # cnf_data = ICNF.cnfData('test1.txt')
-    cnf_data = ICNF.cnfData('test2.txt')
+    cnf_data = ICNF.cnfData('test1.txt')
+    # cnf_data = ICNF.cnfData('test2.txt')
     # cnf_data = ICNF.cnfData('test3.txt')
     # cnf_data = ICNF.cnfData('test4.txt')
     # cnf_data = ICNF.cnfData('test5.txt')
@@ -658,4 +709,4 @@ if __name__ == '__main__':
     print('Chomsky Normal Form:')
 
     _cnf = cnf(cnf_data)
-    _cnf.printCNF()
+    _cnf.printNewCNF()
