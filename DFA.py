@@ -183,7 +183,7 @@ def dfa(startState, finalStates, states, alphabet, transitions):
     new_trans = cp.deepcopy(temp_trans)
     
     # set trans 
-    # Thay đổi hàm chuyển đổi     
+    # Thay đổi trạng thái của hàm chuyển đổi 
     for i in temp_states:
         id_trans = 0
 
@@ -191,31 +191,43 @@ def dfa(startState, finalStates, states, alphabet, transitions):
             trans_i = new_trans[id_trans]
             
             # change the new entry state 
+            # Thay đổi trạng thái bắt đầu trong hàm chuyển sang loại trạng thái mới
+            # p0 a p1 thành s0 a p1
             if temp_states[i] == trans_i[0] or [temp_states[i]] == trans_i[0]:
                 trans_i[0] = i
 
             # incomplete automation supplement
+            # Bổ sung thêm trạng thái để automat là hoàn chỉnh
+            # p1 a null thành p0 a s1
             if len(trans_i) < 3:
                 # add new state
+                # Thêm vào trạng thái mới
                 count = len(temp_states)
                 add_state = 's'+ str(count)
                 temp_states2.update({add_state: None})
 
                 # update trans
+                # Cập nhật lại hàm chuyển
                 trans_i.append(add_state)
 
                 # add new trans of new state
+                # Thêm vào hàm chuyển mới của trạng thái mới
+                # Ứng với từng phần tử trong bảng chữ cái
+                # alphabet = a, b, c
+                # thêm s1 a s1, s1 b s1, s1 c s1
                 for k in alphabet:
-
                     new_trans.append([add_state, k, add_state])
 
             # change the new end state 
+            # Thay đổi trạng thái chuyển tiếp trong hàm chuyển sang loại trạng thái mới
+            # p0 a p1 thành p0 a s1
             elif temp_states[i] == trans_i[2] or [temp_states[i]] == trans_i[2]:
                 trans_i[2] = i
             
             id_trans += 1
 
     # remove transition loop
+    # Xóa những hàm chuyển giống nhau lặp lại
     i = 0
     while i < len(new_trans) - 1:
         ii = new_trans[i]
@@ -228,10 +240,12 @@ def dfa(startState, finalStates, states, alphabet, transitions):
             else: j += 1
         i += 1
 
-    # create new trans dfa
+    # add new trans dfa
+    # thêm tập hàm chuyển mới cho dfa
     dfa.transitions = new_trans
 
-    # create new states
+    # create new states dfa
+    # Tạo bộ trạng thái mới của dfa
     new_states = []
 
     for i in temp_states2:
@@ -239,7 +253,8 @@ def dfa(startState, finalStates, states, alphabet, transitions):
     
     dfa.states = new_states
 
-    # create new start state
+    # create new start state dfa
+    # Trạng thái bắt đầu mới của dfa
     new_start_state = None
 
     for i in temp_states2:
@@ -248,7 +263,8 @@ def dfa(startState, finalStates, states, alphabet, transitions):
     
     dfa.startState = new_start_state
 
-    # create new final state 
+    # create new final state dfa
+    # Trạng thái kết thúc mới của dfa
     new_final_state = []
     
     for i in finalStates:
@@ -258,7 +274,8 @@ def dfa(startState, finalStates, states, alphabet, transitions):
     
     dfa.finalStates = sorted(new_final_state)
 
-    # create new alalphabet
+    # create new alalphabet dfa
+    # Bảng chữ cái của dfa
     dfa.alphabet = alphabet.copy()
 
     return dfa
