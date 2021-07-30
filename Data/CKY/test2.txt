@@ -1,7 +1,6 @@
 a a b b b b
 S
-S -> ZY
-Z -> XS
-S -> YY
-X -> a
-Y -> b
+S ZY YY
+Z XS
+X a
+Y b

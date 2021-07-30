@@ -176,8 +176,14 @@ def printMainCky(sentence, new_sentence, grammar, startSymbol):
 
 # main
 if __name__ == "__main__":
+    # Input data 
     cky_data = CNF.ckyData1('./Data/CKY/test1.txt')
     # cky_data = CNF.ckyData1('./Data/CKY/test2.txt')
+    
+    # Dữ liệu đầu vào với câu cần kiểm tra lấy từ file 'txt'
+    # Ký tự tiên đề và tập quy tắc sinh lấy ra từ lớp cnf
+    # cnf = CNF.cnfData('./Data/CNF/testInputCky.txt')
+    # cky_data = CNF.ckyData2('./Data/CKY/testInputSen.txt', cnf)
 
     # rewrite the sentence
     new_sentence = cky_data.rewriteSentence()

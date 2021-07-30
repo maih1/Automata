@@ -152,9 +152,12 @@ def setType(rules):
     new_grammar = []
 
     for i in rules:
-        set_list = []
-        for j in range(1, len(i)):
-            set_list.append(i[j])
-        new_grammar.append([i[0], set_list])
+        if isinstance(1, list):
+            new_grammar.append(i)
+        else:
+            set_list = []
+            for j in range(1, len(i)):
+                set_list.append(i[j])
+            new_grammar.append([i[0], set_list])
     
     return new_grammar
