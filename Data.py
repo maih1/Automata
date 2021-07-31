@@ -21,12 +21,12 @@ def ndfInput(filedata):
 
     for i in range(len(filedata)):
         if i == 0:
-            startState = filedata[i][0]
-            states.append(filedata[i][0])
+            startState = filedata[i]
+            # states.append(filedata[i][0])
         elif i == 1:
             finalStartes = filedata[i]
-            for j in filedata[i]:
-                states.append(j)
+            # for j in filedata[i]:
+            #     states.append(j)
         else:            
             states.append(filedata[i][0])
             alphabet.append(filedata[i][1])

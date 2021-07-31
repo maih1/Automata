@@ -1,4 +1,4 @@
-import InputNFA as dt
+import Data as dt
 
 
 class Automaton:

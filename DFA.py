@@ -1,5 +1,4 @@
 import Automaton as at
-import InputNFA as dt
 import copy as cp
 
 """
