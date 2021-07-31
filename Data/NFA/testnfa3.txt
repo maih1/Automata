@@ -1,0 +1,10 @@
+a
+c
+a 0 b c
+a 1 a
+a epsilon b
+b 0 
+b 1 b
+b epsilon c
+c 0 c
+c 1 c
