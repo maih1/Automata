@@ -1,5 +1,4 @@
 import math
-import Data as dt
 import Automaton as at
 
 
@@ -7,7 +6,12 @@ import Automaton as at
 def findUnreachableState(states, startState, transitions):
     state_unreachable = []
 
-    states = [i for i in states if i != startState]
+    states = [i for i in states if i not in startState]
+    # new_states = []
+
+    # for i in states:
+    #     if i not in startState:
+    #         new_states.append(i)
 
     for i in states:
         check = False

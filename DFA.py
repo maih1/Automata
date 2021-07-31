@@ -1,5 +1,5 @@
 import Automaton as at
-import Data as dt
+import InputNFA as dt
 import copy as cp
 
 """
@@ -255,11 +255,11 @@ def dfa(startState, finalStates, states, alphabet, transitions):
 
     # create new start state dfa
     # Trạng thái bắt đầu mới của dfa
-    new_start_state = None
+    new_start_state = []
 
     for i in temp_states2:
-        if temp_states2[i] == startState:
-            new_start_state = i
+        if temp_states2[i] in startState:
+            new_start_state.append(i)
     
     dfa.startState = new_start_state
 
