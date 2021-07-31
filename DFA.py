@@ -1,4 +1,5 @@
 import Automaton as at
+import NFA
 import copy as cp
 
 """
@@ -86,7 +87,9 @@ def constructTransitionDual(alphabet, temp_trans, des_many_states):
             
             # union of transition states and add transiton in new list
             # hợp các trạng thái chuyển đổi và thêm chuyển đổi trong danh sách mới
-            union_trans.append([nextState, j, unionTransState(nextstate_k)])
+            _add =[nextState, j, unionTransState(nextstate_k)]
+            if _add not in union_trans:
+                union_trans.append([nextState, j, unionTransState(nextstate_k)])
 
     return union_trans
 
@@ -107,14 +110,21 @@ def newStates(states, des_many_states, union_trans):
     temp_new_states = states.copy()
 
     for i in des_many_states:
-        temp_new_states.append(getNextState(i))
+        _add = getNextState(i)
+        if _add not in temp_new_states:
+            temp_new_states.append(_add)
     
-    # remove loop state
+    for i in union_trans:
+        _add = i[2]
+        if _add not in temp_new_states:
+            temp_new_states.append(_add)
+
+    # # remove loop state
     temp_new_states2 = temp_new_states.copy()
-    for i in range(len(temp_new_states)):
-        for j in range(i+1, len(temp_new_states)):
-            if temp_new_states[i] == temp_new_states[j]:
-                temp_new_states2.pop(j)
+    # for i in range(len(temp_new_states)):
+    #     for j in range(i+1, len(temp_new_states)):
+    #         if temp_new_states[i] == temp_new_states[j]:
+    #             temp_new_states2.pop(j)
     
     count = 0
     new_states = dict()
@@ -149,7 +159,8 @@ def updateTrans(des_many_states, union_trans, transitions):
 
     # add transition function for the dual states to transitions
     for i in union_trans:
-        new_trans.append(i)
+        if i not in new_trans:
+            new_trans.append(i)
 
     return new_trans
 
@@ -173,13 +184,18 @@ def dfa(startState, finalStates, states, alphabet, transitions):
 
     # New states
     # Tạo danh sách trạng thái mới
-    temp_states = newStates(states, des_many_states, union_trans)
-    temp_states2 = temp_states.copy()
+    # temp_states = newStates(states, des_many_states, union_trans)
+    # temp_states2 = temp_states.copy()
     
     # add transition function for the dual states to transitions
     # thêm chức năng chuyển tiếp cho các trạng thái kép để chuyển tiếp
     temp_trans = updateTrans(des_many_states, union_trans, trans)
     new_trans = cp.deepcopy(temp_trans)
+
+    # New states
+    # Tạo danh sách trạng thái mới
+    temp_states = newStates(states, des_many_states, union_trans)
+    temp_states2 = temp_states.copy()
     
     # set trans 
     # Thay đổi trạng thái của hàm chuyển đổi 
@@ -215,7 +231,9 @@ def dfa(startState, finalStates, states, alphabet, transitions):
                 # alphabet = a, b, c
                 # thêm s1 a s1, s1 b s1, s1 c s1
                 for k in alphabet:
-                    new_trans.append([add_state, k, add_state])
+                    _new = [add_state, k, add_state]
+                    if _new not in new_trans:
+                        new_trans.append([add_state, k, add_state])
 
             # change the new end state 
             # Thay đổi trạng thái chuyển tiếp trong hàm chuyển sang loại trạng thái mới
@@ -279,10 +297,33 @@ def dfa(startState, finalStates, states, alphabet, transitions):
 
     return dfa
 
+def main(filename):
+    automation = at.automatonData(filename)
+    _dfa = dfa(automation.startState, automation.finalStates, automation.states, automation.alphabet, automation.transitions)
+    return _dfa
+
+
+def inputData(filename):
+    automaton = at.automatonData(filename)
+
+    # kiem tra ham chuyen co dang epsilon khong
+    check_epsilon = NFA.findTransEp(automaton.transitions)
+
+    # neu khong co dang epsition khong can bien doi nfa
+    if len(check_epsilon) == 0:
+        return automaton
+    
+    # neu co dang epsition thi can chuyen dang epsition nfa sang nfa
+    else:
+        _nfa = NFA.main(filename)
+        return _nfa
+
+
 if __name__ == '__main__':
     print("Automation input: ")
-    automaton = at.automatonData('./Data/Dfa/testdfa1.txt')
-    # automaton = at.automatonData('./Data/Dfa/testdfa2.txt')
+    automaton = inputData('./Data/DFA/testdfa1.txt')
+    # automaton = inputData('./Data/DFA/testdfa2.txt')
+    automaton = inputData('./Data/NFA/testinputdfa.txt')
     automaton.printAutomation()
     
     print('----------------------------------------------')

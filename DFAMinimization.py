@@ -1,5 +1,6 @@
 import math
 import Automaton as at
+import DFA
 
 
 # find Unreachable State
@@ -132,7 +133,8 @@ def stateSame(ls_temp, ls_temp2, ls_state):
                 for k in range(len(ii[1])):
                     
                     # test transition function with classes of subclass
-                    if ii[1][k][1] in ls_state[count_ls_state] and jj[1][k][1] in ls_state[count_ls_state]:
+                    if ii[1][k][1] in ls_state[count_ls_state] \
+                        and jj[1][k][1] in ls_state[count_ls_state]:
                         temp_check_list1 += 1
                         temp_check_list2 += 1
 
@@ -250,9 +252,10 @@ def getPartition(startState, finalStates, states, alphabet, transitions):
                 # find new subclasses for classes with more than 2 states
                 if len(i) > 2:
                     for j in i:
-                        temp_i.append(j)
-                        temp_tran_i.append(
-                            (j, at.findTransitions(j, transitions, alphabet)))
+                        if j not in state_unreachable:
+                            temp_i.append(j)
+                            temp_tran_i.append(
+                                (j, at.findTransitions(j, transitions, alphabet)))
 
                 # For subclasses less than 2 states, 
                 # new partitions can be added
@@ -387,13 +390,21 @@ def dfaMinimization(startState, finalStates, states, alphabet, transitions):
 
     return dfa_min
 
+def inputFromDFA(filename):
+    _dfa = DFA.main(filename)
+    
+    return _dfa
 
 if __name__ == '__main__':
     print("Automation input: ")
-    automaton = at.automatonData('./Data/DfaMin/testdfamin1.txt')
-    # automaton = at.automatonData('./Data/DfaMin/testdfamin2.txt')
-    # automaton = at.automatonData('./Data/DfaMin/testdfamin3.txt')
-    # automaton = at.automatonData('./Data/DfaMin/testdfamin4.txt')
+    automaton = at.automatonData('./Data/DFAMIN/testdfamin1.txt')
+    automaton = at.automatonData('./Data/DFAMIN/testdfamin2.txt')
+    # automaton = at.automatonData('./Data/DFAMIN/testdfamin3.txt')
+    # automaton = at.automatonData('./Data/DFAMIN/testdfamin4.txt')
+
+    # Input data dfamin from dfa
+    # automaton = inputFromDFA('./Data/DFA/testdfa1.txt')
+
     automaton.printAutomation()
 
     print('----------------------------------------------')
