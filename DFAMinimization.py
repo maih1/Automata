@@ -398,7 +398,7 @@ def inputFromDFA(filename):
 if __name__ == '__main__':
     print("Automation input: ")
     automaton = at.automatonData('./Data/DFAMIN/testdfamin1.txt')
-    automaton = at.automatonData('./Data/DFAMIN/testdfamin2.txt')
+    # automaton = at.automatonData('./Data/DFAMIN/testdfamin2.txt')
     # automaton = at.automatonData('./Data/DFAMIN/testdfamin3.txt')
     # automaton = at.automatonData('./Data/DFAMIN/testdfamin4.txt')
 
