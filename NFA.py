@@ -220,6 +220,7 @@ def main(filename):
 # au = at.automatonData('testnfa4.txt')
 # au = at.automatonData('testnfa5.txt')
 au = at.automatonData('./Data/NFA/testinputdfa.txt')
+au = at.automatonData('./Data/NFA/testinputdfa2.txt')
 # au.printAutomation()
 
 c = nfa(au.startState, au.finalStates, au.states, au.alphabet, au.transitions)

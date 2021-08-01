@@ -116,7 +116,7 @@ def newStates(states, des_many_states, union_trans):
     
     for i in union_trans:
         _add = i[2]
-        if _add not in temp_new_states:
+        if len(_add) > 1 and _add not in temp_new_states:
             temp_new_states.append(_add)
 
     # # remove loop state
@@ -286,7 +286,7 @@ def dfa(startState, finalStates, states, alphabet, transitions):
     
     for i in finalStates:
         for j in temp_states:
-            if i in temp_states[j]:
+            if i in temp_states[j] and j not in new_final_state:
                 new_final_state.append(j)
     
     dfa.finalStates = sorted(new_final_state)
@@ -321,9 +321,10 @@ def inputData(filename):
 
 if __name__ == '__main__':
     print("Automation input: ")
-    automaton = inputData('./Data/DFA/testdfa1.txt')
+    # automaton = inputData('./Data/DFA/testdfa1.txt')
     # automaton = inputData('./Data/DFA/testdfa2.txt')
     # automaton = inputData('./Data/NFA/testinputdfa.txt')
+    automaton = inputData('./Data/NFA/testinputdfa2.txt')
     automaton.printAutomation()
     
     print('----------------------------------------------')
