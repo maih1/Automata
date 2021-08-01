@@ -29,6 +29,7 @@ thuật toán chuyển đổi từ otomat hữu hạn không đơn định thàn
 
 Input: Otomat hữu hạn không đơn định A = <S, Σ, δ, q0, F>
 Ouput: Otomat hữu hạn đơn định A' = <S’, Σ, δ’, s0, F’>
+
 Phương pháp:
 Bước 1: Kiểm tra NFA có phải là NFAε không
         Nếu là dạng NFAε thì chuyển đổi sạng dạng NFA
