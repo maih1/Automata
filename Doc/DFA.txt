@@ -1,0 +1,55 @@
+ĐƠN ĐỊNH HÓA OTOMAT (Deterministic Finite Automaton - DFA)
+
+1 - otomat hữu hạn đơn định
+DFA là một bộ 5: A = (S, Σ, s0, δ, F)
+    + S: Tập hữu hạn khác rỗng các trạng thái
+    + Σ: Bảng chữ cái vào (khác rỗng)
+    + s0 ∈ S: trạng thái khởi đầu
+    + F ⊆ S : tập trạng thái kết
+    + δ: S × Σ → S : hàm chuyển trạng thái
+      δ(p, a) = q
+
+
+2 - otomat hữu hạn không đơn định (Nondeterministic Finite Automata - NFA)
+NFA là một bộ 5: A = (S, Σ, s0, δ, F), trong đó S, Σ, s0, F giống otomat đơn định và
+    + δ: S × Σ → 2S
+
+
+3 - otomat hữu hạn không đơn định với ε-dịch chuyển (NFAε)
+NFA là một bộ 5: A = (S, Σ, s0, δ, F), trong đó S, Σ, s0, F giống otomat đơn định và
+    + δ: S × (Σ ∪ {ε}) → 2^(S)
+      δ(p, a) ⊆ S
+
+Hai otomat hữu hạn A = (S, Σ, s0, δ, F) và A’= <S’, Σ’, s0’, δ’, F’> được gọi 
+là tương đương nếu T(A) = T(A’) (đoán nhận/sinh cùng một ngôn ngữ)
+
+
+4 - Thuật toán đơn định hóa otomat 
+thuật toán chuyển đổi từ otomat hữu hạn không đơn định thành otomat hữu hạn đơn định
+
+Input: Otomat hữu hạn không đơn định A = <S, Σ, δ, q0, F>
+Ouput: Otomat hữu hạn đơn định A' = <S’, Σ, δ’, s0, F’>
+Phương pháp:
+Bước 1: Kiểm tra NFA có phải là NFAε không
+        Nếu là dạng NFAε thì chuyển đổi sạng dạng NFA
+        Nếu không chuyển sang bước 2
+Bước 2: Xác định các hàm chuyển kép (hàm 2 biến):
+  2.1 - ∀ q ∈ S, ∀ a ∈ Σ thì T(q, a) = {q’ ∈ S | q’ = δ(q, a) }
+  2.2 - ∀ B ⊆ S mà δ(q, a) = B, ∀ a ∈ Σ thì T(B, a) = hợp của T(p, a), p ∈ B
+  Hàm sử dụng:
+  - constructTransitionDual
+Bước 3: Xác định tập trạng thái mới S' = {s0, s1, …, sk | k ≤ 2^(|s|-1)}
+  3.1 - Đặt s0 = {q0}, ..., si = {qi} ∀ {q0}, {q1}, …, {qi} ∈ S
+  3.2 - Đặt s(i+1) = B1, s(i+2) = B2 ..., ∀ B1, B2 … ⊆ S mà δ(qj, a) = Bj
+  3.2 - Nếu otomat là không đầy đủ (tồn tại hàm chuyển rỗng), Đặt s(k) = ∅
+        thêm hàm chuyển δ'(s(k), a) = s(k), ∀ a ∈ Σ
+  3.4 - Trạng thái khởi đầu của otomat A' là s0
+  3.5 - Tập trạng thái kết thúc của otomat A': F' = {s ∈ S' | s ∩ F ≠ ∅}
+  Hàm sử dụng:
+  - newStates
+  - dfa: 217 - 236, 264 - 292
+Bước 4: Xác định hàm chuyển δ': S' × Σ → S'
+        ∀ s ∈ S', ∀ a ∈ Σ thì δ'(s, a) = T(s, a) 
+  Hàm sử dụng:
+  - updateTrans
+  - dfa: 262
