@@ -50,6 +50,7 @@ def getNextState(trans_i):
     
     return next_state
 
+# Lay trang thai bat dau
 def getStartTranStates(trans):
     start_state_trans = []
 
@@ -219,9 +220,10 @@ def main(filename):
 # au = at.automatonData('testnfa1.txt')
 # au = at.automatonData('testnfa4.txt')
 # au = at.automatonData('testnfa5.txt')
-au = at.automatonData('./Data/NFA/testinputdfa.txt')
-au = at.automatonData('./Data/NFA/testinputdfa2.txt')
+# au = at.automatonData('./Data/NFA/testinputdfa.txt')
+# au = at.automatonData('./Data/NFA/testinputdfa2.txt')
+# au = at.automatonData('./Data/DFA/testdfa1.txt')
 # au.printAutomation()
 
-c = nfa(au.startState, au.finalStates, au.states, au.alphabet, au.transitions)
-c.printAutomation()
+# c = nfa(au.startState, au.finalStates, au.states, au.alphabet, au.transitions)
+# c.printAutomation()

@@ -5,11 +5,11 @@ class Automaton:
     def __init__(self, startState=None, finalStates=None, states=None, alphabet=None, transitions=None):
         """
         Input:
-        -startState: start state (s_0) ''
+        -startState: start state (s0) []
         -finalStartes: a list final state (F) []
         -states: a lists containing the states (S) []
-        -alphabet: a lists alphabet (sigma) []
-        -transitions: state transition function (delta) {}
+        -alphabet: a lists alphabet (Σ - sigma) []
+        -transitions: state transition function (δ -delta) {}
         """
         self.startState = startState
         self.finalStates = finalStates
@@ -29,6 +29,38 @@ class Automaton:
 
         return automaton
 
+    def printTran(self):
+        print('\t{:{width}}'.format('S\\Σ', width=20), end='')
+
+        for i in self.alphabet:
+            print('{:{width}}'.format(i, width=20,), end='')
+        
+        print()
+        s_states = getStartTranStates(self.transitions)
+        for i in s_states:
+            print('\t{:{width}}'.format('{}'.format(i), width=20), end='')
+
+            for al in self.alphabet:
+                j = 0
+                check_tran = True
+                while check_tran == True and j < len(self.transitions):
+            # for j in self.transitions:
+                    if i == self.transitions[j][0] and al == self.transitions[j][1]:
+                        if len(self.transitions[j]) == 2:
+                            print('{:{width}}'.format('null', width=20,), end='')
+                        elif len(self.transitions[j]) > 3:
+                            p = []
+                            for k in range(2, len(self.transitions[j])):
+                                p.append(self.transitions[j][k])
+                            print('{:{width}}'.format('{}'.format(p), width=20,), end='')
+                        else:
+                            print('{:{width}}'.format('{}'.format(self.transitions[j][2]), width=20,), end='')
+
+                        check_tran = False
+                    else: j += 1
+            print()
+
+
     # print data automation
     def printAutomation(self):
         automaton = self.automatonForm()
@@ -37,8 +69,12 @@ class Automaton:
         for i in automaton:
             if i == 'transitions':
                 print('+ transitions (delta):')
-                for j in range(len(automaton[i])):
-                    print('\tdelta {}: {}'.format(j, automaton[i][j]))
+                # In dạng bảng
+                self.printTran()
+
+                # In dạng hàm
+                # for j in range(len(automaton[i])):
+                #     print('\tdelta {}: {}'.format(j, automaton[i][j]))
             else:
                 print('+ {}: {}'.format(i, automaton[i]))
 
@@ -86,3 +122,13 @@ def findTransitions(x, transitions, alphabet):
         else: length += 1
              
     return listFind
+
+# Lay trang thai bat dau
+def getStartTranStates(trans):
+    start_state_trans = []
+
+    for i in trans:
+        if i[0] not in start_state_trans:
+            start_state_trans.append(i[0])
+    
+    return start_state_trans
