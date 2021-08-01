@@ -113,8 +113,8 @@ def unionTransState(list_states):
 
     for i in list_states:
         list_union = list(set(list_union) | set(i))
-    
-    return sorted(list_union)
+    list_union.sort()
+    return list_union
 
 def updateTrans(states, alphabet, transitions, ls_eq):
     # ls_eq = find_eq(states, transitions)
@@ -203,10 +203,11 @@ def nfa(startState, finalStates, states, alphabet, transitions):
     
     for i in finalStates:
         for j in ls_eq:
-            if i in ls_eq[j] and j not in new_final_state:
+            if i in ls_eq[j] and j in startState and j not in new_final_state:
                 new_final_state.append(j)
     
     new_final_state = list(set(new_final_state))
+    new_final_state.sort()
     _nfa.finalStates = new_final_state
 
     return _nfa
@@ -217,9 +218,10 @@ def main(filename):
     _nfa = nfa(automation.startState, automation.finalStates, automation.states, automation.alphabet, automation.transitions)
     return _nfa
 
-# au = at.automatonData('testnfa1.txt')
-# au = at.automatonData('testnfa4.txt')
-# au = at.automatonData('testnfa5.txt')
+# au = at.automatonData('./Data/NFA/testnfa1.txt')
+# au = at.automatonData('./Data/NFA/testnfa4.txt')
+# au = at.automatonData('./Data/NFA/testnfa2.txt')
+# au = at.automatonData('./Data/NFA/testnfa5.txt')
 # au = at.automatonData('./Data/NFA/testinputdfa.txt')
 # au = at.automatonData('./Data/NFA/testinputdfa2.txt')
 # au = at.automatonData('./Data/DFA/testdfa1.txt')
