@@ -1,0 +1,26 @@
+NFAε - NFA
+Thuật toán chuyển đổi từ NFAε sang NFA: Loại bỏ hàm chuyển ε
+
+Input: Otomat hữu hạn không đơn định A = <S, Σ, δ, s0, F>, δ có hàm chuyển là ε
+Ouput: Otomat hữu hạn không đơn định A' = <S', Σ', δ', s0', F'>, 
+       δ không có hàm chuyển là ε
+
+Phương pháp:
+Bước 1: Tìm tất cả các chuyển đổi ε của mỗi trạng thái trong S.          
+        εq(i), qi ∈ S, εq là tập tất cả các đỉnh s 
+        sao cho nó có đường đi từ q đến s với nhãn ε 
+    Hàm sử dụng: find_eq
+Bước 2: Tìm hàm chuyển đổi δ' có thể thu được
+        Các chuyển đổi δ' là εq(i) khi di chuyển δ
+        δ'(q, a) = εq(i), i = q
+                 = εq(δ(δ(q, ε), a)), δ(q, ε) = εq(i), i = q
+        + δ(R, a) = hợp δ(q, a), q ∈ R
+        + εq(P) = hợp eq(q), q ∈ P
+Bước 3: Lặp lại bước 2 cho mỗi trạng thái với từng ký hiệu vào
+        δ'(q, a), q ∈ S, a ∈ Σ
+    Hàm sử dụng: updateTrans, get_eq
+Bước 4: Sử dụng trạng thái kết quả nhận được từ bước 3 của từng trạng thái
+        Xây dựng NFA
+        F' = F ∪ {q0} nếu εq(s0) chứa một trạng thái thuộc F
+           = F trong các trường hợp còn lại
+    Hàm sử dụng: nfa
