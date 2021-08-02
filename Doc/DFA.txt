@@ -25,7 +25,7 @@ là tương đương nếu T(A) = T(A’) (đoán nhận/sinh cùng một ngôn 
 
 
 4 - Thuật toán đơn định hóa otomat 
-thuật toán chuyển đổi từ otomat hữu hạn không đơn định thành otomat hữu hạn đơn định
+Thuật toán chuyển đổi từ otomat hữu hạn không đơn định thành otomat hữu hạn đơn định
 
 Input: Otomat hữu hạn không đơn định A = <S, Σ, δ, q0, F>
 Ouput: Otomat hữu hạn đơn định A' = <S’, Σ, δ’, s0, F’>
