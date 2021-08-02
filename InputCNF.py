@@ -101,6 +101,11 @@ class CKY:
 
         return new_sentence
 
+    def printCKY(self):
+        for i in range(len(self.sentence)):
+            print('\t{:{width}}'.format('{}'.format(i+1), width=10),end='\t')
+        print()
+
 def cnfData(filename):
     fileData = dt.opendFileInput(filename)
     cnfData = dt.cnfInput(fileData)

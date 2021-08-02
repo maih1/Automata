@@ -157,10 +157,11 @@ def _p(length):
 # In bảng cky
 def printCky(ls_cky):
     for i in range(len(ls_cky)):
+        print(i, end='')
         for j in range(len(ls_cky)):
             if j < i:
-                print('{:{width}}'.format('', width=10),end='\t')
-            else: print('{:{width}}'.format('{}'.format(ls_cky[i][j]), width=10),end='\t')
+                print('\t{:{width}}'.format('', width=10),end='\t')
+            else: print('\t{:{width}}'.format('{}'.format(ls_cky[i][j]), width=10),end='\t')
         print()
 
 # Print the analysis sentence that can be derived from grammar G?
@@ -194,6 +195,12 @@ if __name__ == "__main__":
     # Print main
     printMainCky(cky_data.sentence, new_sentence, cky_data.grammar, cky_data.startSymbol)
     
+    print('------------------------------------------------------------------')
+
+    # print start symbol
+    print('Start symbol: ', cky_data.startSymbol)
+    
     # Print table cky
     print('Table CKY:')
+    cky_data.printCKY()
     printCky(_cky)
