@@ -3,7 +3,8 @@ import Automaton as at
 import DFA
 
 
-# find Unreachable State
+# Find Unreachable State
+# Fìm trạng thái Không thể truy cập
 def findUnreachableState(states, startState, transitions):
     state_unreachable = []
 
@@ -27,6 +28,7 @@ def findUnreachableState(states, startState, transitions):
 
 
 # remove unreachable state in states
+# loại bỏ trạng thái không thể truy cập ở tâp trạng thái
 def removeUnreachableState(states, state_unreachable):
     temp_states = states.copy()
     for i in state_unreachable:
@@ -36,6 +38,7 @@ def removeUnreachableState(states, state_unreachable):
 
 
 # remove unreachable state transitions
+# loại bỏ các hàm chuyển đổi của trạng thái không thể truy cập
 def removeUnreachableTransition(state_unreachable, transitions):
     temp_tran = transitions.copy()
     check_tran = True
@@ -52,7 +55,7 @@ def removeUnreachableTransition(state_unreachable, transitions):
     return temp_tran
 
 
-# check if two arrays are equal
+# check if two list are equal
 def checkListEqual(ls1, ls2):
     count = 0
 
@@ -66,6 +69,7 @@ def checkListEqual(ls1, ls2):
 
 
 # find state with the same partition
+# tìm trạng thái có cùng phân vùng 
 def stateSamePartition(ls_temp_copy):
     # new list same partition
     ls_same_partition = []
@@ -107,12 +111,14 @@ def sortKey(tuple):
 
 
 # find state with same partition nth time
+# tìm trạng thái với cùng một phân vùng lần thứ n
 def stateSame(ls_temp, ls_temp2, ls_state):
     ls_same_partition = []
     ls_temp2_copy = ls_temp2.copy()
     i = 0
 
     # check first place with the rest
+    # kiểm tra vị trí đầu tiên với phần còn lại
     while len(ls_temp2_copy) > 0:
         ii = ls_temp2_copy[i]
         temp_list = [ii[0]]
@@ -127,12 +133,14 @@ def stateSame(ls_temp, ls_temp2, ls_state):
             temp_check_list1 = 0
 
             # check 2 state in list state
+            # kiểm tra 2 trạng thái trong trạng thái danh sách 
             while check_ls == True and count_ls_state < len(ls_state):
                 temp_check_list2 = 0
 
                 for k in range(len(ii[1])):
                     
                     # test transition function with classes of subclass
+                    # kiểm tra chức năng chuyển tiếp với các lớp của lớp con
                     if ii[1][k][1] in ls_state[count_ls_state] \
                         and jj[1][k][1] in ls_state[count_ls_state]:
                         temp_check_list1 += 1
@@ -140,24 +148,33 @@ def stateSame(ls_temp, ls_temp2, ls_state):
 
                 # all transfer functions (alphabets) of 2 states belong to the same class of partition, 
                 # the 2 states create a new class in the new partition
+                # nếu tất cả các hàm truyền (bảng chữ cái) của 2 trạng thái đều thuộc cùng một lớp phân vùng,
+                # 2 trạng thái tạo một lớp mới trong phân vùng mới 
                 if temp_check_list2 == len(ii[1]):
                     temp_list.append(jj[0])
                     ls_temp2_copy.pop(j)
                     check_ls = False
                 # check next partition
+                # kiểm tra phân vùng tiếp theo
                 elif temp_check_list1 == len(ii[1]):
                     check_ls = False
                 else:
                     count_ls_state += 1
 
             # each transfer function (alphabet) of 2 states belonging to the same class in the partition,
-            # the 2 states create a new class in the new partition        
+            # the 2 states create a new class in the new partition      
+            # nếu mỗi hàm chuyển (bảng chữ cái) của 2 trạng thái thuộc cùng một lớp trong phân vùng,
+            # 2 trạng thái tạo một lớp mới trong phân vùng mới  
             if temp_check_list1 == len(ii[1]) and temp_check_list1 != temp_check_list2:
                 temp_list.append(jj[0])
                 ls_temp2_copy.pop(j)
+            
+            # Nếu không kiểm tra với trạng thái tiếp theo
             elif temp_check_list1 != len(ii[1]):
                 j += 1
+        
         # add new class to partition
+        # thêm lớp mới vào phân vùng
         if len(temp_list) == 1:
             ls_same_partition.append([ii[0]])
         elif len(temp_list) != 1:
@@ -168,31 +185,37 @@ def stateSame(ls_temp, ls_temp2, ls_state):
     return ls_same_partition
 
 
-# Get equivalence states 
+# find the equivalence state from the partition
+# tìm trạng thái tương đương từ phân phân hoạch
 def getPartition(startState, finalStates, states, alphabet, transitions):
     # unreachable state
     # remove unreachable state in states
     state_unreachable = findUnreachableState(states, startState, transitions)
     temp_states = removeUnreachableState(states, state_unreachable)
 
-    # create partition
+    # create first partition - r0
+    # tạo phân vùng đầu tiên - r0
     liststate = []
     ls_00 = finalStates
     ls_01 = [i for i in temp_states if i not in finalStates]
     ls_0 = [ls_00, ls_01]
 
-    # add first partition
+    # add second partition - r1
+    # thêm phân vùng thứ hai
     liststate.append(ls_0)
 
     temp_liststate = liststate.copy()
 
-    # class does not reach the end state
+    # class does not reach the final state
+    # lớp không đạt đến trạng thái cuối cùng
     ls_not_final = []
 
-    # class only to end state
+    # class only to final state
+    # lớp chỉ cho trạng thái cuối cùng
     ls_full_final = []
 
-    # class includes both finished and unterminated
+    # class with next state including final state and not final state
+    #  lớp có trạng thái tiếp theo bao gồm trạng thái cuối cùng và không phải trạng thái cuối cùng
     ls_temp = []
     ls_temp2 = []
 
@@ -207,19 +230,25 @@ def getPartition(startState, finalStates, states, alphabet, transitions):
 
         list_check_state = [k for k in list_next_state if k in finalStates]
         
-        # add does not reach the end state
+        # add a state to a class that doesn't reach the final state 
+        # thêm trạng thái vào lớp không đạt đến trạng thái kết thúc
         if len(list_check_state) == 0:
             ls_not_final.append(i)
-        # add class only to end state
+
+        # add state to the class only reaching the final state
+        # thêm trạng thái vào lớp chỉ đạt trạng thái cuối cùng
         elif len(list_check_state) == len(list_next_state):
             ls_full_final.append(i)
-        # add class includes both finished and unterminated
+
+        # add state to class including final and not final status
+        # thêm trạng thái vào lớp bao gồm trạng thái cuối cùng và không phải trạng thái cuối cùng
         else:
             ls_temp.append(i)
             ls_temp2.append((i, list_next_trans))
 
     # new subclasses including completed and unfinished classes
-    # add subclasses for 2nd partition 
+    # add subclasses for 2nd partition - r1
+    # Thêm lớp con cho phân hoạch thứ 2 - r1
     ls_temp_lists_final = stateSamePartition(ls_temp2)
     ls_temp_lists_final.append(ls_00)
     ls_temp_lists_final.append(ls_full_final)
@@ -236,6 +265,7 @@ def getPartition(startState, finalStates, states, alphabet, transitions):
     liststate.append(ls_1)
 
     # check and find the next partitions
+    # kiểm tra và tìm các phân vùng tiếp theo 
     if checkListEqual(liststate[0], liststate[1]) == True:
         return liststate[0]
     else:
@@ -245,11 +275,13 @@ def getPartition(startState, finalStates, states, alphabet, transitions):
             length = len(liststate) - 1
 
             # find the new partition from the previous partition
+            # tìm phân vùng mới từ phân vùng trước
             for i in liststate[length]:
                 temp_i = []
                 temp_tran_i = []
 
                 # find new subclasses for classes with more than 2 states
+                # tìm các lớp con mới cho các lớp có nhiều hơn 2 trạng thái
                 if len(i) > 2:
                     for j in i:
                         if j not in state_unreachable:
@@ -259,18 +291,25 @@ def getPartition(startState, finalStates, states, alphabet, transitions):
 
                 # For subclasses less than 2 states, 
                 # new partitions can be added
+                # Đối với các lớp con ít hơn 2 trạng thái,
+                # phân vùng mới có thể được thêm vào
                 if len(temp_tran_i) == 0:
                     new_temp_list.append(i)
                 
                 # handle finding new subclasses for classes with more than 2 states
+                # xử lý việc tìm các lớp con mới cho các lớp có nhiều hơn 2 trạng thái
                 else:
                     # a = stateSamePartition(tempa_tran_i)
                     for j in stateSame(temp_i, temp_tran_i, liststate[length]):
                         new_temp_list.append(j)
 
             # check if 2 arrays are equal
+            # kiểm tra xem 2 mảng có bằng nhau không (2 phân hoạch)
+
             # If 2 consecutive partitions are equal, return that partition
             # if not, repeat find the new partition from the previous partition
+            # Nếu 2 phân vùng liên tiếp bằng nhau, hãy trả về phân vùng đó
+            # nếu không, lặp lại tìm phân vùng mới từ phân vùng trước
             if checkListEqual(liststate[length], new_temp_list) == True:
                 return liststate[length]
             else:
@@ -278,6 +317,8 @@ def getPartition(startState, finalStates, states, alphabet, transitions):
 
 
 # Get equivalence states
+# list equivalence states
+# Nhận trạng thái tương đương
 def getListEquivalenceStates(listState):
     listEqui = []
     for i in listState:
@@ -287,22 +328,28 @@ def getListEquivalenceStates(listState):
     return listEqui
 
 
-# list equivalence states
+# create dfa minimization
+# Tạo otomat tối tiểu
 def dfaMinimization(startState, finalStates, states, alphabet, transitions):
     # Get equivalence states
+    # Nhận trạng thái tương đương 
     listState = getPartition(startState, finalStates,
                           states, alphabet, transitions)
 
     # list states together to a destination
+    # danh sách các trạng thái cùng nhau đến một điểm đến/danh sách trạng thái tương đương
     list_equi = getListEquivalenceStates(listState)
 
     # unreachable state
+    # trạng thái không thể truy cập
     state_unreachable = findUnreachableState(states, startState, transitions)
 
+    # create new automat/dfa
     # create new automat/dfa
     dfa_min = at.Automaton()
 
     # new start state
+    # trạng thái bắt đầu mới
     if len(list_equi) == 0:
         dfa_min.startState = startState
     else:
@@ -321,6 +368,7 @@ def dfaMinimization(startState, finalStates, states, alphabet, transitions):
             dfa_min.startState = startState
 
     # new final states
+    # tập trạng thái kết thúc mới 
     if len(list_equi) == 0:
         dfa_min.finalStates = finalStates
     else:
@@ -344,6 +392,7 @@ def dfaMinimization(startState, finalStates, states, alphabet, transitions):
         dfa_min.finalStates = list(set(dfa_final))
 
     # new dfa states
+    # tập trạng thái mới
     temp_states = states.copy()
     for i in state_unreachable:
         temp_states.remove(i)
@@ -354,9 +403,12 @@ def dfaMinimization(startState, finalStates, states, alphabet, transitions):
     dfa_min.alphabet = alphabet
 
     # new transitions
+    # hàm chuyển trạng thái mới
     dfa_min.transitions = []
 
     # if the list is empty dfa transition equals input automat transition
+    # Nếu danh sách các trạng thái tương rỗng
+    # thì hàm chuyển trạng thái của dfamin là hàm chuyển trạng thái của dfa
     if len(list_equi) == 0:
         dfa_min.transitions = transitions.copy()
     else:
@@ -364,6 +416,8 @@ def dfaMinimization(startState, finalStates, states, alphabet, transitions):
         temp_tran = removeUnreachableTransition(state_unreachable, transitions)
 
         # convert final state and delete transition in states together to a destination
+        # chuyển đổi trạng thái cuối cùng và xóa chuyển đổi ở các trạng thái cùng nhau đến một điểm đến 
+        # thay đổi các trạng thái trong hàm chuyển bằng các trạng thái tương đương
         for i in temp_list_equi:
             for j in temp_tran:
                 if j[0] in i:
@@ -372,6 +426,7 @@ def dfaMinimization(startState, finalStates, states, alphabet, transitions):
                     j[2] = i
 
         # remove transition loop
+        # loại bỏ vòng lặp chuyển tiếp 
         i = 0
         while i < len(temp_tran) - 1:
             ii = temp_tran[i]
@@ -385,6 +440,7 @@ def dfaMinimization(startState, finalStates, states, alphabet, transitions):
             i += 1
 
         # add to transition in dfa transition
+        # thêm vào chuyển đổi trong chuyển đổi dfamin
         for i in temp_tran:
             dfa_min.transitions.append(i)
 
@@ -397,10 +453,10 @@ def inputFromDFA(filename):
 
 if __name__ == '__main__':
     print("Automation input: ")
-    # automaton = at.automatonData('./Data/DFAMIN/testdfamin1.txt')
+    automaton = at.automatonData('./Data/DFAMIN/testdfamin1.txt')
     # automaton = at.automatonData('./Data/DFAMIN/testdfamin2.txt')
     # automaton = at.automatonData('./Data/DFAMIN/testdfamin3.txt')
-    automaton = at.automatonData('./Data/DFAMIN/testdfamin4.txt')
+    # automaton = at.automatonData('./Data/DFAMIN/testdfamin4.txt')
 
     # Input data dfamin from dfa
     # automaton = inputFromDFA('./Data/DFA/testdfa1.txt')
