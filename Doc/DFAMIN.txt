@@ -1,0 +1,46 @@
+TỐI TIỂU HÓA OTOMAT HỮU HẠN ĐƠN ĐỊNH 
+(Deterministic Finite Automaton Minimization - DFAMinimization)
+
++ Hai trạng thái s1 và s2 được gọi là tương đương nếu δ(s1, x) và δ(s2, x) 
+đều là những trạng thái kết thúc hoặc cả hai đều  không kết thúc với mọi x ∈ Σ*
+
++ Hai trạng thái s1 và s2 được gọi là k-tương đương ( k >= 0) nếu δ(s1, x) và 
+δ(s2, x) đều là những trạng thái kết thúc hoặc cả hai đều không kết thúc với 
+mọi x ∈ Σ* có độ dài nhỏ hơn k
+
++ Trạng thái không thể truy cập là trạng thái không thể truy cập được từ trạng 
+thái ban đầu của DFA, đối với bất kỳ chuỗi đầu vào nào
+
+Thuật toán tối tiểu hóa otomat
+
+Input: Otomat hữu hạn A = <S, Σ, δ, s0, F>
+Ouput: Otomat hữu hạn đơn định và cực tiểu A' = <S’, Σ, δ’, s0', F’>
+
+Phương pháp:
+Bước 1: Tìm các trạng thái không thể truy cập và loại bỏ
+    Hàm sử dụng: 
+    + findUnreachableState
+    + removeUnreachableState
+    + removeUnreachableTransition
+Bước 2: Lập phân hoạch r0, r0 = {S_01, S_02} (theo 0-tương đương)
+        S_01 = F, S_02 = S\F
+    Hàm sử dụng: 
+    + getPartition: 184 - 187
+Bước 3: Xây dựng r(k+1) từ r(k)
+        - Xây dựng các lớp S_ki là tập con của của phân hoạch r(k) (là lớp k+1 - tương đương)
+        - s1, s2 nẳm trong S_ki nếu δ(s1, x) và δ(s2, x) là k - tương đương
+        - lặp lại các ý trên để tìm các S_ki và tao thành phân hoạch r(k+1)
+    Hàm sử dụng:
+    + getPartition: 190 - 252 (xây dựng lớp phân hoạch r1 từ r0)
+Bước 4: Lặp bước 2 tìm phân hoạch r(k) với k = 1, 2,...
+        Dừng lặp khi r(k+1) = r(k)
+    Hàm sử dụng:
+    + getPartition: 255 - 295
+    + stateSame
+Bước 5: Xây dựng otomat tối tiểu 
+        - Trạng thái bắt đầu mới: s0' = S_ki nếu S_ki chứa s0
+                                      = s0 nếu s0 là một S_ki riêng
+        - Trạng thái kết thúc mới: F' = S_01, S_01 lớp trạng thái kết thúc của phân hoạch r0
+        - Tập trạng thái mới S' = S\trạng thái không thể truy cập
+        - Hàm chuyển trạng thái mới: thay đổi các trạng thái trong hàm chuyển 
+          bằng các trạng thái tương đương trong phân hoạch r(k)
