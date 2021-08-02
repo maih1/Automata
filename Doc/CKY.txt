@@ -1,0 +1,40 @@
+COCKE KASAMI YOUNGER (CKY)
+
+- Thuật toán CKY phân tích câu X để biết chúng có sinh được từ văn phạm 
+đã xây dựng không.
+
+Input: Văn phạm phi ngữ cảnh dạng chuẩn Chomsky G = (Σ, V, S, P), 
+       Câu cần phân tích a = a1....an 
+Ouput: Câu cần phân tích có sinh được từ văn phạm G không
+
+Phương pháp:
+Bước 1: Tạo bảng/ma trận cỡ n x n , n là độ dài của câu phân tích
+    Hàm sử dụng: 
+    + listCheckCky
+Bước 2: Gán giá trị cho các ô trong bảng với i ∈ [0, n − 1], j ∈ [0, n - 1]
+        ô(j, i) = C, C ∈ V thỏa mãn C ⇒∗ ai+1 . . . aj+1
+
+Bước 3: Tìm vế trái của các ký tự trong câu cần phân tích trong bộ quy tắc
+        Giá trị vế trái tìm được lưu vào vị trí i, i trong bảng
+    Hàm sử dụng:
+    + cky: 82 - 84
+Bước 4: Tìm các giá trị khác trong bảng từ vị trí i ∈ [1, n - 1], j ∈ [0, n − 2]
+        + Lặp theo đường chéo trong bảng với tìm n - i, giá trị mỗi ô(j, i) 
+        + Tìm giá trị ô(j, i) với mỗi vị trí i thì j ∈ [0, n − i]
+    Hàm sử dụng:
+    + cky: 86 - 132
+Bước 5: Kiểm tra giá trị ô(0, n-1) 
+        + Nếu là ký tự tiên đề: Xâu vào là câu chấp nhận được hay câu a sinh được từ văn phạm
+        + Nếu là ký tự khác: xâu vào là câu không chấp nhận được
+    Hàm sử dụng:
+    + checkCky
+
+
+Bảng cky:
+    0      1                    2                           3                                   ...     n-1
+0   X00    X01 = (X00, X11)     X02=(X00,X12),(X01,X22)     X03=(X00,X13),(X01,X23),(X02,X33)           X0n-1
+1          X11                  X12=(X11,X22)               X13=(X11,X13),(X12,X33)                     X1n-1
+2                               X22	                        X23=(X22,X33)                               X2n-1
+3                                                           X33                                         X3n-1
+...                                                                                             ...     Xn-2n-1
+Xn-1                                                                                                    Xn-1n-1
