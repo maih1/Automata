@@ -87,7 +87,7 @@ def cky(sentence, grammar):
     # Tìm vế trái từ các giá trị vế trái của các ký tự trong câu cần phân tích
 
     # Tìm từ vị trí ký tự thứ 2 đến vị trí ký tự thứ n
-    # Tương ứng từ vị trí i = 0 đến i = n-1 trong bảng cky
+    # Tương ứng từ vị trí i = 1 đến i = n-1 trong bảng cky
 
     # Lặp từ phần tử thứ 2 đến n
     # Tương ứng với đặt giá trị từ vị trí thứ i = 1 đến i = n-1 trong bảng cky
