@@ -1,2 +1,3 @@
 # Automata
-DFA minimization, CKY
+DFA and DFA minimization
+CNF and CKY
