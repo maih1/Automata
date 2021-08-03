@@ -1,0 +1,78 @@
+CHOMSKY NORMAL FORM (Chomsky Normal Form - CNF)
+1 - Văn phạm
+Văn phạm là một bộ bốn G = (Σ, V, σ, P), trong đó:
++ Σ là bảng chữ cái chính/tập kí hiệu kết thúc
++ V là bảng chữ cái phụ/tập kí hiệu không kết hay tập biến, V ∩ Σ = ∅
++ σ ∈ V là tiên đề (biến khởi tạo)
++ P là tập các quy tắc sinh có dạng α → β, α, β ∈ (Σ ∪ V)*, α /∈ Σ*
+
+2 - Văn phạm phi ngữ cảnh
+G là văn phạm phi ngữ cảnh nếu mọi quy tắc trong tập quy tắc sinh có dạng:
+    A -> a trong đó A ∈ V và a ∈ (Σ ∪ V)*
+
+3 - Văn phạm phi ngữ cảnh dạng chuẩn chomky 
+Văn phạm phi ngữ cảnh G ở dạng chuẩn Chomsky nếu mỗi quy tắc sinh có một trong 2 dạng:
++ A → a, a ∈ Σ
++ A → BC, A, B, C ∈ V
+
+Thuật toán chuyển văn phạm phi ngữ cảnh về dạng chuẩn Chomsky
+
+Input: Văn phạm phi ngữ cảnh tùy ý G = (Σ, V, σ, P)
+Ouput: Văn phạm phi ngữ cảnh dạng chuẩn Chomsky G' = (Σ', V', σ, P')
+
+Phương pháp:
+Bước 1: Loại bỏ các quy tắc rỗng: A→ε
+        + Tìm tập các biến rỗng W:
+            - W1 = {A ∈ V | A→ε ∈ P}
+            - W(i+1) = W(i) ∪ {A ∈ V |  A -> α, α ∈ W(i)*}
+        + Mọi qui tắc mà vế phải không có biến rỗng đưa vào P'
+        + Nếu A -> X1X2..Xk ∈ P, Xi ∈ (Σ∪Δ) thì bổ sung quy tắc mới 
+          A -> α1α2..αk, trong đó αi = Xi nếu X /∈ W 
+                         hoặc αi = Xi = ε nếu Xi ∈ W và α1α2..αk != ε
+    Hàm sử dụng:
+    + rmNullRules
+    + delSym
+Bước 2: Loại bỏ quy tắc đơn: A→B, A, B ∈ V
+      + Tìm tập các quy tắc đơn
+      + Để loại bỏ A → B, thêm quy tắc A → x vào tập quy tắc khi nào
+        B → x là một quy tắc trong tập quy tắc.
+      + Xóa qui tắc A -> B 
+      + Lặp lại đến khi xóa hết các quy tắc đơn
+    Hàm sử dụng:
+    + getLeftUnit
+    + rmUnitRules
+Bước 3: Loại bỏ quy tắc/biến dư thừa:
+      + Loại bỏ biến vô sinh: Những biến không dẫn ra được xâu kết thúc
+        - Xây dựng V':
+          * W1 = {A ∈ V | A -> a, a ∈ Σ} varNotTer: 245 - 252
+          * W(i+1) = Wi U (B ∈ V | B -> a ∈ (Wi U Σ)) varNotTer: 254 - 265
+          Dừng lặp khi W(i+1) = Wi và V'=Wi 
+        - Cập nhật P': các quy tắc trong P mà các ký hiệu có mặt trong 
+          đó đều thuộc tập Σ U V'. varNotTer: 267 - 295
+          
+      + Loại bỏ biến không dẫn đến được: Những biến không dẫn xuất ra được từ S
+        - Bắt đầu từ tiên đề/biến khởi tạo
+          Y1 = {σ}
+        - Thêm vào biến là những quy tắc dẫn từ Yi 
+          Y(i+1) = Yi U (B ∈ (Σ U V) | B -> a, B ∈ Yi và a chứa B). nonDerivable: 337 - 364
+        - Lặp đến khi Y(i+1) = Yi
+        - V' = V giao Yi, Σ' = Σ giao Yi, 
+        - P' = {A -> a | A -> a ∈ P và A ∈ Yi}
+    Hàm sử dụng:
+    + varNotTer
+    + nonDerivable
+Bước 4: Đưa vào P' các quy tắc dạng A -> a, A -> BC , a ∈ Σ, A, B, C ∈ V
+    Hàm sử dụng: getRulesStandard
+Bước 5: Biến đổi các quy tắc vế phải chứa cả biến chính và phụ, A -> bC
+      + Thay bằng quy tắc A -> X1X2..Xn, Nếu Xi = a ∈ Σ
+      + Thêm quy tắc C(a) -> a vào P', và C(a) vào V'
+      + Lặp lại cho tất cả các Xi nếu Xi là ∈ Σ
+      + Lặp lại cho tất cả các quy tắc dạng này
+    Hàm sử dụng: transRightMainSub
+Bước 6: Biến đổi các quy tắc vế phải có dạng A -> BCD
+      + Quy tắc A -> A1A2..Am, m > 2
+      + Thêm vào P' số các quy tắc mới dạng
+        A -> A1C1, C1 -> A2C2, ... C(m-2) -> A(m-1)A(m)
+      + Thêm vào V' m - 2 ký hiệu phụ mới 
+        C1,... C(m-2)
+    Hàm sử dụng: transRightGeater2
