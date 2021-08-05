@@ -355,9 +355,11 @@ def dfaMinimization(startState, finalStates, states, alphabet, transitions):
     else:
         check_start = True
         start_index = 0
-        
+        start = startState[0]
+
         while check_start == True and start_index <= len(list_equi):
-            if start_index < len(list_equi) and startState in list_equi[start_index] and check_start == True:
+            if start_index < len(list_equi) and start in list_equi[start_index] and check_start == True:
+            # if start_index < len(list_equi) and startState in list_equi[start_index] and check_start == True:
                 dfa_min.startState = tuple(list_equi[start_index])
                 check_start = False
             elif start_index < len(list_equi) - 1:
