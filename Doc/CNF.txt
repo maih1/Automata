@@ -4,7 +4,7 @@ Văn phạm là một bộ bốn G = (Σ, V, σ, P), trong đó:
 + Σ là bảng chữ cái chính/tập kí hiệu kết thúc
 + V là bảng chữ cái phụ/tập kí hiệu không kết hay tập biến, V ∩ Σ = ∅
 + σ ∈ V là tiên đề (biến khởi tạo)
-+ P là tập các quy tắc sinh có dạng α → β, α, β ∈ (Σ ∪ V)*, α /∈ Σ*
++ P là tập các quy tắc sinh có dạng α → β, α, β ∈ (Σ ∪ V)*, α /∈ Σ* (α bắt buộc phải có 1 ký hiệu phụ)
 
 2 - Văn phạm phi ngữ cảnh
 G là văn phạm phi ngữ cảnh nếu mọi quy tắc trong tập quy tắc sinh có dạng:
