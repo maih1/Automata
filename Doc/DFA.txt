@@ -21,7 +21,7 @@ NFA là một bộ 5: A = (S, Σ, s0, δ, F), trong đó S, Σ, s0, F giống ot
       δ(p, a) ⊆ S
 
 Hai otomat hữu hạn A = (S, Σ, s0, δ, F) và A’= <S’, Σ’, s0’, δ’, F’> được gọi 
-là tương đương nếu T(A) = T(A’) (đoán nhận/sinh cùng một ngôn ngữ)
+là tương đương nếu L(A) = L(A’) (đoán nhận/sinh cùng một ngôn ngữ)
 
 
 4 - Thuật toán đơn định hóa otomat 
