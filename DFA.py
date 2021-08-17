@@ -72,11 +72,13 @@ def constructTransitionDual(alphabet, temp_trans, des_many_states):
     # new_trans = findTransMany(transitions)
     union_trans = []
     temp_trans = temp_trans.copy()
+    ls_next_state_des = at.getNextTransStates(des_many_states) 
 
-    for i in des_many_states:     
-        nextState = at.findTransitions(i[0], des_many_states, alphabet)
-        nextState = list(nextState[0])
-        nextState.pop(0)
+    for i in ls_next_state_des:     
+        # nextState = at.findTransitions(i[0], des_many_states, alphabet)
+        # nextState = list(nextState[0])
+        # nextState.pop(0)
+        nextState = i
 
         for j in alphabet:
             nextstate_k = []
@@ -214,7 +216,7 @@ def dfa(startState, finalStates, states, alphabet, transitions):
             # incomplete automation supplement
             # Bổ sung thêm trạng thái để automat là hoàn chỉnh
             # p1 a null thành p0 a s1
-            if len(trans_i) < 3:
+            if len(trans_i) < 3 or len(trans_i[2]) == 0:
                 # add new state
                 # Thêm vào trạng thái mới
                 count = len(temp_states)
@@ -223,7 +225,10 @@ def dfa(startState, finalStates, states, alphabet, transitions):
 
                 # update trans
                 # Cập nhật lại hàm chuyển
-                trans_i.append(add_state)
+                if len(trans_i) < 3:
+                    trans_i.append(add_state)
+                else:
+                    trans_i[2] = add_state
 
                 # add new trans of new state
                 # Thêm vào hàm chuyển mới của trạng thái mới
@@ -321,10 +326,10 @@ def inputData(filename):
 
 if __name__ == '__main__':
     print("Automation input: ")
-    automaton = inputData('./Data/DFA/testdfa1.txt')
+    # automaton = inputData('./Data/DFA/testdfa1.txt')
     # automaton = inputData('./Data/DFA/testdfa2.txt')
     
-    # automaton = inputData('./Data/NFA/testnfa4.txt')
+    automaton = inputData('./Data/NFA/testnfa4.txt')
     # automaton = inputData('./Data/NFA/testinputdfa.txt')
     # automaton = inputData('./Data/NFA/testinputdfa2.txt')
     automaton.printAutomation()
