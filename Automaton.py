@@ -47,7 +47,7 @@ class Automaton:
             # for j in self.transitions:
                     if i == self.transitions[j][0] and al == self.transitions[j][1]:
                         if len(self.transitions[j]) == 2:
-                            print('{:{width}}'.format('null', width=20,), end='')
+                            print('{:{width}}'.format('-', width=20,), end='')
                         elif len(self.transitions[j]) > 3:
                             p = []
                             for k in range(2, len(self.transitions[j])):
@@ -132,3 +132,23 @@ def getStartTranStates(trans):
             start_state_trans.append(i[0])
     
     return start_state_trans
+
+# Lay trạng thái chuyển tiếp
+def getNextTransStates(trans):
+    next_states_trans = []
+
+    for i in trans:
+        if len(i) <= 2:
+            pass
+        elif len(i) == 3:
+            next_states_trans.append[[i[2]]]
+        else:
+            states = []
+            
+            for j in range(2, len(i)):
+                states.append(i[j])
+            
+            if states not in next_states_trans:
+                next_states_trans.append(states)
+    
+    return next_states_trans
