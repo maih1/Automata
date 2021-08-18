@@ -16,7 +16,7 @@ NFA là một bộ 5: A = (S, Σ, s0, δ, F), trong đó S, Σ, s0, F giống ot
 
 
 3 - otomat hữu hạn không đơn định với ε-dịch chuyển (NFAε)
-NFA là một bộ 5: A = (S, Σ, s0, δ, F), trong đó S, Σ, s0, F giống otomat đơn định và
+NFAε là một bộ 5: A = (S, Σ, s0, δ, F), trong đó S, Σ, s0, F giống otomat đơn định và
     + δ: S × (Σ ∪ {ε}) → 2^(S)
       δ(p, a) ⊆ S
 
