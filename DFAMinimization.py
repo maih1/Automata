@@ -399,6 +399,17 @@ def dfaMinimization(startState, finalStates, states, alphabet, transitions):
     for i in state_unreachable:
         temp_states.remove(i)
 
+    for i in list_equi:
+        id_state = 0
+        while id_state < len(temp_states):
+            if temp_states[id_state] in i:
+                temp_states.pop(id_state)
+            else:
+                id_state += 1
+        temp_states.append(i)
+
+    dfa_min.states = temp_states
+
     dfa_min.states = temp_states
 
     # new dfa alphabet
