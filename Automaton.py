@@ -5,11 +5,11 @@ class Automaton:
     def __init__(self, startState=None, finalStates=None, states=None, alphabet=None, transitions=None):
         """
         Input:
-        -startState: start state (s0) []
+        -startState: start state (s0) ''
         -finalStartes: a list final state (F) []
         -states: a lists containing the states (S) []
         -alphabet: a lists alphabet (Σ - sigma) []
-        -transitions: state transition function (δ -delta) {}
+        -transitions: state transition function (δ -delta) []
         """
         self.startState = startState
         self.finalStates = finalStates
@@ -67,7 +67,9 @@ class Automaton:
 
         # print
         for i in automaton:
-            if i == 'transitions':
+            if i == 'startState' and isinstance(automaton[i], list):
+                print('+ {}: {}'.format(i, automaton[i][0]))
+            elif i == 'transitions':
                 print('+ transitions (delta):')
                 # In dạng bảng
                 self.printTran()
