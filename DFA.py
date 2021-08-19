@@ -330,6 +330,7 @@ if __name__ == '__main__':
     # automaton = inputData('./Data/DFA/testdfa2.txt')
     
     # automaton = inputData('./Data/NFA/testnfa4.txt')
+    # automaton = inputData('./Data/NFA/testinputdfa1.txt')
     # automaton = inputData('./Data/NFA/testinputdfa2.txt')
     automaton.printAutomation()
     

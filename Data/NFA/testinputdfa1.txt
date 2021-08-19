@@ -1,0 +1,15 @@
+q0
+q1
+q0 a q1
+q0 b q1
+q0 epsilon q3
+q1 a q0
+q1 b
+q1 epsilon q2
+q2 a q1 q2
+q2 b
+q3 a q4
+q3 b q3
+q3 epsilon q4
+q4 a
+q4 b q3
