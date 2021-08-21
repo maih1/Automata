@@ -116,6 +116,8 @@ def unionTransState(list_states):
     list_union.sort()
     return list_union
 
+
+# Xây dựng lại hàm chuyển
 def updateTrans(states, alphabet, transitions, ls_eq):
     # ls_eq = find_eq(states, transitions)
     new_ls_trans = []
