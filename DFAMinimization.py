@@ -470,6 +470,7 @@ if __name__ == '__main__':
     # automaton = at.automatonData('./Data/DFAMIN/testdfamin2.txt')
     # automaton = at.automatonData('./Data/DFAMIN/testdfamin3.txt')
     # automaton = at.automatonData('./Data/DFAMIN/testdfamin4.txt')
+    # automaton = at.automatonData('./Data/DFAMIN/testdfamin5.txt')
 
     # Input data dfamin from dfa
     # automaton = inputFromDFA('./Data/DFA/testdfa1.txt')
