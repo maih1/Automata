@@ -73,8 +73,15 @@ def constructTransitionDual(alphabet, temp_trans, des_many_states):
     union_trans = []
     temp_trans = temp_trans.copy()
     ls_next_state_des = at.getNextTransStates(des_many_states) 
-
-    for i in ls_next_state_des:     
+    check_ls_next_state_des = cp.deepcopy(ls_next_state_des)
+    
+    # if len(ls_next_state_des) == 0:
+    #     return union_trans 
+    # else:
+    index = 0
+    while index < len(ls_next_state_des):
+        i = ls_next_state_des[index]
+    # for i in ls_next_state_des:     
         # nextState = at.findTransitions(i[0], des_many_states, alphabet)
         # nextState = list(nextState[0])
         # nextState.pop(0)
@@ -82,19 +89,28 @@ def constructTransitionDual(alphabet, temp_trans, des_many_states):
 
         for j in alphabet:
             nextstate_k = []
-           
+        
             for k in nextState:
                 # find next state
                 nextstate_k.append(findTransNotAlpha(k, j, temp_trans))
             
             # union of transition states and add transiton in new list
             # hợp các trạng thái chuyển đổi và thêm chuyển đổi trong danh sách mới
+            _union_trans_state = unionTransState(nextstate_k)
             _add =[nextState, j, unionTransState(nextstate_k)]
             if _add not in union_trans:
                 union_trans.append([nextState, j, unionTransState(nextstate_k)])
+            
 
-    return union_trans
+            # kiem tra trang thai hop
+            if len(_union_trans_state) > 1 and _union_trans_state not in check_ls_next_state_des:
+                ls_next_state_des.append(_union_trans_state)
+                check_ls_next_state_des.append(_union_trans_state)
+        
+        ls_next_state_des.pop(index)
 
+    return union_trans 
+    
 # Get next state
 # Lấy trạng thái chuyển tiếp
 def getNextState(trans_i):
@@ -328,6 +344,7 @@ if __name__ == '__main__':
     print("Automation input: ")
     automaton = inputData('./Data/DFA/testdfa1.txt')
     # automaton = inputData('./Data/DFA/testdfa2.txt')
+    automaton = inputData('./Data/DFA/testdfa3.txt')
     
     # automaton = inputData('./Data/NFA/testnfa4.txt')
     # automaton = inputData('./Data/NFA/testinputdfa1.txt')
