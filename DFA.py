@@ -344,7 +344,7 @@ if __name__ == '__main__':
     print("Automation input: ")
     automaton = inputData('./Data/DFA/testdfa1.txt')
     # automaton = inputData('./Data/DFA/testdfa2.txt')
-    automaton = inputData('./Data/DFA/testdfa3.txt')
+    # automaton = inputData('./Data/DFA/testdfa3.txt')
     
     # automaton = inputData('./Data/NFA/testnfa4.txt')
     # automaton = inputData('./Data/NFA/testinputdfa1.txt')
