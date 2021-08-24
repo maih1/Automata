@@ -24,10 +24,16 @@ def splitString(form, string):
         j = i + 1
         check = True
         while check == True and j < len(ls):
+            a =ls[j]
             if ls[j] not in form and mg not in form:
                 check = False
-            elif len(mg) == 5:
-                check = False
+            elif len(mg) == 5 or len(mg) == 7:
+                mg1 = mg + ls[j]
+
+                if mg1 in form:
+                    mg += ls[j]
+                    ls.pop(j)
+                else: check = False
             else:
                 mg += ls[j]
                 ls.pop(j)
@@ -347,7 +353,8 @@ def nonDerivable(mainAlphabet, subAlphabet, startSymbol, rules, cnf, form):
                 for j in i[1]:
                     ls_split = splitString(form, j)
                     for k in ls_split:
-                        new_der.append(k)
+                        if k not in new_der:
+                            new_der.append(k)
 
                         if k not in temp_der:
                             temp_der.append(k)
@@ -531,10 +538,51 @@ def transRightMainSub(tup_rules, mainAlphabet, subAlphabet, form):
 
     return new_tup
     
+# Xóa quy tắc có vế phải giống nhau
+def delRulesSame(rules, form):
+    # _get_right = getRightSide()
+    i = 0
+    while i < len(rules):
+        # a = rules[i][0]
+        _get_right_i = rules[i][1]
+        _ls_left_same = []
+        j = i+1
+        
+        while j < len(rules):
+            # b = rules[j][0]
 
+            _get_right_j = rules[j][1]
+
+            if _get_right_i == _get_right_j:
+                _ls_left_same.append(rules[j][0])
+                rules.pop(j)
+            else: j += 1
+
+        if len(_ls_left_same) > 0:
+            for k in _ls_left_same:
+                for id_r in rules:
+                    for id_gr in range(len(id_r[1])):
+                        v = id_r[1][id_gr]
+                        _splitString = splitString(form, id_r[1][id_gr])
+
+                        if k not in _splitString:
+                            pass
+                        else:
+                            for id_sp in range(len(_splitString)):
+                                if k == _splitString[id_sp]:
+                                    _splitString[id_sp] = rules[i][0]
+                            meg = megString(_splitString)
+                            id_r[1][id_gr] = meg
+        
+        i += 1
+
+    return rules 
+            
+        
 # Transform the rules where the right side has length greater than 2
 # Biến đổi các quy tắc mà vế phải có độ dài lớn hơn 2
 def transRightGeater2(tup_rules, form):
+    form2 = cp.deepcopy(form)
     temp_tup = cp.deepcopy(tup_rules)
     new_ls_rules = temp_tup[0]
     new_sub = temp_tup[2]
@@ -546,7 +594,8 @@ def transRightGeater2(tup_rules, form):
 
         temp_right_rules = []
 
-        for j in i[1]:
+        for id_j in range(len(i[1])):
+            j = i[1][id_j]
 
             ls_split = splitString(form, j)
 
@@ -558,9 +607,11 @@ def transRightGeater2(tup_rules, form):
             while k < length:
                 # Add the kth extra character to m - 2, m = length on the right side
                 # Thêm vào ký tự phụ thứ k đến m - 2, m = độ dài vế phải
-                sub_i = 'C_(' + str(k) + ')'
+                sub_i = 'C_(' + i[0] + str(id_j) + str(k) + ')'
+                
                 if sub_i not in new_sub and (k + 2) != len(ls_split):
                     new_sub.append(sub_i)
+                    form2.append('C_(' + i[0])
 
                 # Added new subscript corresponding rule
                 # Thêm vào quy tắc tương ứng với ký tự phụ mới
@@ -570,20 +621,27 @@ def transRightGeater2(tup_rules, form):
 
                     if meg not in temp_right_rules:
                         temp_right_rules.append(meg)
+                        form2.append(sub_i)
             
                 elif (k + 2) == len(ls_split):
-                    sub_i = 'C_(' + str(k - 1) + ')'
+                    sub_i = 'C_(' + i[0] + str(id_j) + str(k - 1) + ')'
                     meg = megString([ls_split[k],ls_split[k+1]])
                     new_rulse_i = [sub_i, [meg]]
 
                     if new_rulse_i not in temp_new_ls_rules:
+                        # form.append(sub_i)
+                        form2.append('C_(' + i[0] + str(id_j))
+                        form2.append('C_(' + i[0] + str(id_j) + str(k - 1))
                         temp_new_ls_rules.append(new_rulse_i)
                 else:
-                    sub_back_i = 'C_(' + str(k-1) + ')'
+                    sub_back_i = 'C_(' + i[0] + str(id_j) + str(k-1) + ')'
                     meg = megString([ls_split[k],sub_i])
                     new_rulse_i = [sub_back_i, [meg]]
                     
                     if new_rulse_i not in temp_new_ls_rules:
+                        # form.append(sub_back_i)
+                        # form.append('C_(' + i[0] + str(id_j))
+                        # form.append('C_(' + i[0] + str(id_j) + str(k - 1))
                         temp_new_ls_rules.append(new_rulse_i)
 
                 k += 1
@@ -614,11 +672,14 @@ def transRightGeater2(tup_rules, form):
             if temp_new_ls_rules[i][0] == temp_new_ls_rules[j][0]:
                 new_rigt_rules.append(temp_new_ls_rules[j][1][0])
                 temp_new_ls_rules.pop(j)
+            # if temp_new_ls_rules[i][0] == temp_new_ls_rules[j][0]
             else: j += 1
         
         new_ls_rules.append([temp_new_ls_rules[i][0], new_rigt_rules])
         temp_new_ls_rules.pop(i)
       
+    delRulesSame(new_ls_rules, form2)
+    
     new_sub.sort()
     new_ls_rules.sort()
     # Returns a tuple of
@@ -635,7 +696,9 @@ def transRightGeater2(tup_rules, form):
 # Văn phạm theo dạng chuẩn Chomsky
 def cnf(_cnf):
     _cnf = cp.deepcopy(_cnf)
-    form = ['(', ')', '_', 'C_(', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    # form = ['(', ')', '_', 'C_(', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    form = ['(', ')', '_', 'C_(']
+
     form = upForm(form, _cnf.mainAlphabet)
     # Reset style for rule set
     # Thiết lập lại kiểu cho bộ quy tắc
@@ -700,6 +763,7 @@ if __name__ == '__main__':
     # cnf_data = ICNF.cnfData('./Data/CNF/test3.txt')
     # cnf_data = ICNF.cnfData('./Data/CNF/test4.txt')
     # cnf_data = ICNF.cnfData('./Data/CNF/test5.txt')
+    # cnf_data = ICNF.cnfData('./Data/CNF/test6.txt')
     # cnf_data = ICNF.cnfData('./Data/CNF/testInputCky.txt')
 
     cnf_data.printCNF()

@@ -1,0 +1,6 @@
+0 1
+S A b
+S
+S 0SA 1SB 0 1
+A 0A 0
+B 1B 1
