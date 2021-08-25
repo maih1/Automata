@@ -160,6 +160,8 @@ def updateTrans(des_many_states, union_trans, transitions):
     new_trans = transitions.copy()
 
     # update type next many state
+    # Cập nhật lại kiểu cho trạng thái chuyển đến
+    # ['p0', 'b', 'p1', 'p2'] = ['p0', 'b', ['p1', 'p2']]
     for i in des_many_states:
         update = []
         for j in range(2, len(i)):
@@ -206,7 +208,7 @@ def dfa(startState, finalStates, states, alphabet, transitions):
     # temp_states2 = temp_states.copy()
     
     # add transition function for the dual states to transitions
-    # thêm chức năng chuyển tiếp cho các trạng thái kép để chuyển tiếp
+    # thêm hàm chuyển cho các trạng thái kép
     temp_trans = updateTrans(des_many_states, union_trans, trans)
     new_trans = cp.deepcopy(temp_trans)
 
